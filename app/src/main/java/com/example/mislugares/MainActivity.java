@@ -80,31 +80,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if  (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {
             lanzarPreferencias(null);
             return true;
         }
-        if (id == R.id. acercaDe) {
+        if (id == R.id.acercaDe) {
             lanzarAcercaDe(null);
             return true;
         }
-        if(id == R.id.menu_buscar) {
+        if (id == R.id.menu_buscar) {
             lanzarVistaLugar(null);
             return true;
         }
-        if (id==R.id.menu_mapa) {
+        if (id == R.id.menu_mapa) {
             Intent intent = new Intent(this, MapaActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.menu_usuario) {
+            Intent intent = new Intent(this, UsuarioActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void lanzarAcercaDe(View view){
+    public void lanzarAcercaDe(View view) {
         Intent i = new Intent(this, AcercaDeActivity.class);
         startActivity(i);
     }
 
-    public void lanzarVistaLugar(View view){
+    public void lanzarVistaLugar(View view) {
         final EditText entrada = new EditText(this);
         entrada.setText("0");
         new AlertDialog.Builder(this)
@@ -118,12 +122,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                 VistaLugarActivity.class);
                         i.putExtra("id", id);
                         startActivity(i);
-                    }})
+                    }
+                })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    void ultimaLocalizazion(){
+    void ultimaLocalizazion() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.
                 ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (manejador.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -133,19 +138,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             if (manejador.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 actualizaMejorLocaliz(manejador.getLastKnownLocation(
                         LocationManager.NETWORK_PROVIDER));
-            } else  {
-                PermisosUtilidades.solicitarPermiso(Manifest.permission.ACCESS_FINE_LOCATION,
-                        "Sin permiso de localización no es posible mostrar la distancia"+
-                        " a los lugares.", SOLICITUD_PERMISO_LOCALIZACION, this);
             }
+        } else {
+            PermisosUtilidades.solicitarPermiso(Manifest.permission.ACCESS_FINE_LOCATION,
+                    "Sin permiso de localización no es posible mostrar la distancia" +
+                            " a los lugares.", SOLICITUD_PERMISO_LOCALIZACION, this);
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         if (requestCode == SOLICITUD_PERMISO_LOCALIZACION) {
-            if (grantResults.length== 1 &&
+            if (grantResults.length == 1 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 ultimaLocalizazion();
                 activarProveedores();
@@ -155,13 +161,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         activarProveedores();
-        if (fragmentVista!=null && SelectorFragment.adaptador.getItemCount()>0) {
+        if (fragmentVista != null && SelectorFragment.adaptador.getItemCount() > 0) {
             fragmentVista.actualizarVistas(0);
         }
     }
+
     private void activarProveedores() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.
                 ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -175,12 +183,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         } else {
             PermisosUtilidades.solicitarPermiso(Manifest.permission.ACCESS_FINE_LOCATION,
-                    "Sin el permiso localización no puedo mostrar la distancia"+
-                    " a los lugares.", SOLICITUD_PERMISO_LOCALIZACION, this);
+                    "Sin el permiso localización no puedo mostrar la distancia" +
+                            " a los lugares.", SOLICITUD_PERMISO_LOCALIZACION, this);
         }
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.
                 ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -188,24 +197,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
-    @Override public void onLocationChanged(Location location) {
-        Log.d(Lugares.TAG, "Nueva localización: "+location);
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(Lugares.TAG, "Nueva localización: " + location);
         actualizaMejorLocaliz(location);
         //adaptador.notifyDataSetChanged();
         SelectorFragment.adaptador.notifyDataSetChanged();
     }
 
-    @Override public void onProviderDisabled(String proveedor) {
-        Log.d(Lugares.TAG, "Se deshabilita: "+proveedor);
+    @Override
+    public void onProviderDisabled(String proveedor) {
+        Log.d(Lugares.TAG, "Se deshabilita: " + proveedor);
         activarProveedores();
     }
-    @Override   public void onProviderEnabled(String proveedor) {
-        Log.d(Lugares.TAG, "Se habilita: "+proveedor);
+
+    @Override
+    public void onProviderEnabled(String proveedor) {
+        Log.d(Lugares.TAG, "Se habilita: " + proveedor);
         activarProveedores();
     }
+
     @Override
     public void onStatusChanged(String proveedor, int estado, Bundle extras) {
-        Log.d(Lugares.TAG, "Cambia estado: "+proveedor);
+        Log.d(Lugares.TAG, "Cambia estado: " + proveedor);
         activarProveedores();
     }
 
@@ -213,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void actualizaMejorLocaliz(Location localiz) {
         if (localiz != null && (mejorLocaliz == null
-                || localiz.getAccuracy() < 2*mejorLocaliz.getAccuracy()
+                || localiz.getAccuracy() < 2 * mejorLocaliz.getAccuracy()
                 || localiz.getTime() - mejorLocaliz.getTime() > DOS_MINUTOS)) {
             Log.d(Lugares.TAG, "Nueva mejor localización");
             mejorLocaliz = localiz;
