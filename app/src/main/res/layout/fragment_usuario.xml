@@ -1,35 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView1"
+    android:id="@+id/contenedor"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="4dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/imagen"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:paddingTop="0dp"
-            android:src="@android:drawable/sym_def_app_icon" />
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/imagen"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:paddingTop="0dp"
+                android:src="@android:drawable/sym_def_app_icon" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right">
+
+                <Spinner
+                    android:id="@+id/spinner_foto_perfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--<ImageView-->
+                <!--android:id="@+id/camara"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:contentDescription="logo cámara"-->
+                <!--android:src="@android:drawable/ic_menu_camera" />-->
+
+                <!--<ImageView-->
+                <!--android:id="@+id/galeria"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:contentDescription="logo galería"-->
+                <!--android:src="@android:drawable/ic_menu_gallery" />-->
+
+                <!--<ImageView-->
+                <!--android:id="@+id/eliminarFoto"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:contentDescription="Eliminar foto"-->
+                <!--android:src="@android:drawable/ic_menu_close_clear_cancel" />-->
+            </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre de usuario: " />
 
-            <TextView
-                android:id="@+id/nombre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minHeight="?android:attr/actionBarSize"
+                android:transitionGroup="true">
+
+                <EditText
+                    android:id="@+id/nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de usuario"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:textSize="14dp" />
+            </android.support.design.widget.TextInputLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -37,17 +85,102 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_correo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Correo: " />
+                android:layout_marginTop="4dp"
+                android:minHeight="?android:attr/actionBarSize"
+                android:transitionGroup="true">
 
-            <TextView
-                android:id="@+id/correo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/correo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Correo"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:textSize="14dp" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minHeight="?android:attr/actionBarSize"
+                android:transitionGroup="true">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:textSize="14dp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_telefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minHeight="?android:attr/actionBarSize"
+                android:transitionGroup="true">
+
+                <EditText
+                    android:id="@+id/telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Teléfono"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:enabled="false"
+                    android:textSize="14dp" />
+            </android.support.design.widget.TextInputLayout>
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_proveedor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minHeight="?android:attr/actionBarSize"
+                android:transitionGroup="true">
+
+                <EditText
+                    android:id="@+id/proveedor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:hint="Proveedor"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:textSize="14dp" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,40 +189,54 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Proveedor: " />
+                android:text="uid: " />
 
             <TextView
-                android:id="@+id/proveedor"
+                android:id="@+id/uid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
 
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Teléfono: " />
+            <Button
+                android:id="@+id/btn_cerrar_sesion"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0.5"
+                android:background="#d0021b"
+                android:padding="4dp"
+                android:text="Cerrar sesión"
+                android:textColor="#fff" />
 
-            <TextView
-                android:id="@+id/telefono"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btn_grabar_perfil"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0.5"
+                android:background="#66bb6a"
+                android:padding="4dp"
+                android:text="Grabar Perfil"
+                android:textColor="#fff" />
+
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_cerrar_sesion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="#d0021b"
-            android:padding="8dp"
-            android:text="Cerrar sesión"
+            android:id="@+id/btn_unir_cuenta"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="4dp"
+            android:background="#dfaa1b"
+            android:padding="4dp"
+            android:text="Unificar con otra cuenta"
             android:textColor="#fff" />
     </LinearLayout>
 </ScrollView>

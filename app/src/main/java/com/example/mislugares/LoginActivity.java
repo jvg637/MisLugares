@@ -79,10 +79,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void chooseProvider() {
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
-                ,new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.mipmap.ic_launcher)
+                .setTheme(R.style.FirebaseUITema)
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
+                        , new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
                 ))
                 .setIsSmartLockEnabled(false).build(), RC_SIGN_IN);
     }
@@ -112,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (loginByPassword) {
+
             if (usuario.isEmailVerified()) {
                 return true;
             } else {
@@ -129,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == ResultCodes.OK) {
                 login();
+//                Se quita porque si se envia login a validar (email) y luego se introduce otro
 //                finish();
             } else {
                 IdpResponse response = IdpResponse.fromResultIntent(data);

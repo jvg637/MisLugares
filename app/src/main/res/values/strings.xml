@@ -23,4 +23,10 @@
     <string name="error_google">Error al iniciar sesión con Google</string>
     <string name="error_empty">Por favor ingrese todos los campos</string>
     <string name="error_cancelled">Error, inicio de sesión cancelado</string>
+
+
+    <string name="fui_default_toolbar_title">Tipo de Autentificación</string>
+    <string name="fui_sign_in_with_email">Entra con tu correo</string>
+    <string name="fui_progress_dialog_signing_up">Creando cuenta...</string>
+    <string name="fui_sign_in_with_facebook" translation_description="Sign in button text">Entra con Facebook</string>
 </resources>

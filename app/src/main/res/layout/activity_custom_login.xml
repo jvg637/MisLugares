@@ -38,7 +38,7 @@
             android:minHeight="?android:attr/actionBarSize"
             android:transitionGroup="true"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/til_correo">
+            app:layout_constraintTop_toBottomOf="@id/til_correo">
 
             <EditText
                 android:id="@+id/contraseña"
@@ -56,10 +56,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:onClick="inicioSesion"
-            android:text="Iniciar Sesión"
+            android:text="Log In"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/registro"
-            app:layout_constraintTop_toBottomOf="@+id/til_contraseña" />
+            app:layout_constraintRight_toLeftOf="@id/registro"
+            app:layout_constraintTop_toBottomOf="@id/til_contraseña" />
 
 
         <Button
@@ -68,34 +68,46 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:onClick="registroCorreo"
-            android:text="Registrarme"
-            app:layout_constraintLeft_toRightOf="@+id/inicio_sesión"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/til_contraseña" />
+            android:text="Register"
+            app:layout_constraintLeft_toRightOf="@id/inicio_sesión"
+            app:layout_constraintRight_toRightOf="@id/resetPwd"
+            app:layout_constraintTop_toBottomOf="@id/til_contraseña" />
 
         <Button
-        android:id="@+id/google"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:onClick="autentificarGoogle"
-        android:text="Iniciar sesión con Google"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/resetPwd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="reestablecerContraseña"
+            android:text="Reset Pwd."
 
-        app:layout_constraintTop_toBottomOf="@+id/inicio_sesión" />
+            app:layout_constraintLeft_toRightOf="@id/registro"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_contraseña" />
+
+        <Button
+            android:id="@+id/google"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="autentificarGoogle"
+            android:text="Iniciar sesión con Google"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@+id/inicio_sesión" />
 
         <!--<com.google.android.gms.common.SignInButton-->
-            <!--android:id="@+id/google"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="8dp"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--android:onClick="autentificarGoogle"-->
-            <!--android:text="Iniciar sesión con Google"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/inicio_sesión" />-->
+        <!--android:id="@+id/google"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:onClick="autentificarGoogle"-->
+        <!--android:text="Iniciar sesión con Google"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/inicio_sesión" />-->
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/facebook"
@@ -116,6 +128,18 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/facebook" />
 
+
+        <Button
+            android:id="@+id/anonimo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="autentificaciónAnónima"
+            android:text="Iniciar sesión Anónima"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twitter" />
+
         <Button
             android:id="@+id/firebase_ui"
             android:layout_width="match_parent"
@@ -125,6 +149,7 @@
             android:text="Iniciar sesión con FirebaseUI"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/twitter" />
+            app:layout_constraintTop_toBottomOf="@id/anonimo" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

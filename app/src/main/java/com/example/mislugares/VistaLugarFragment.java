@@ -269,7 +269,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         startActivityForResult(intent, RESULTADO_GALERIA);
     }
 
-    private static final int SOLICITUD_PERMISO_LECTURA = 0;
+    public static final int SOLICITUD_PERMISO_LECTURA = 0;
 
     ImageView lastImageView;
     String lastUri;
