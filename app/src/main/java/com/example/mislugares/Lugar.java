@@ -12,6 +12,16 @@ public class Lugar {
     private float valoracion;
     private TipoLugar tipo;
 
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    private String usuario;
+
 
     public Lugar(String nombre, String direccion, double longitud,
                  double latitud, int telefono, String url, String comentario,

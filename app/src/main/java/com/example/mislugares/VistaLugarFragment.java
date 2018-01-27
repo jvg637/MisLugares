@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -33,6 +34,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,11 +53,13 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     final static int RESULTADO_FOTO = 3;
     private Uri uriFoto;
     private View v;
+    private ViewGroup contenedorMsg;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
                              Bundle savedInstanceState) {
         View vista = inflador.inflate(R.layout.vista_lugar, contenedor, false);
+        contenedorMsg = vista.findViewById(R.id.scrollView1);
         setHasOptionsMenu(true);
         LinearLayout pUrl = (LinearLayout) vista.findViewById(R.id.barra_url);
         pUrl.setOnClickListener(new View.OnClickListener() {
@@ -226,30 +231,37 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         startActivity(intent);
     }
 
+    private void mensaje(String mensaje) {
+        Snackbar.make(contenedorMsg, mensaje, Snackbar.LENGTH_LONG).show();
+    }
     //    public void borrarLugar(final int id) {
     public void borrarLugar() {
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Borrado de lugar")
-                .setMessage("¿Estás seguro que quieres eliminar este lugar?")
-                .setCancelable(false)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
-                        MainActivity.lugares.borrar(_id);
+        if (lugar.getUsuario()!=null && !lugar.getUsuario().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            mensaje("Sólo el creador del lugar puede realizar el borrado");
+        else {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Borrado de lugar")
+                    .setMessage("¿Estás seguro que quieres eliminar este lugar?")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+                            MainActivity.lugares.borrar(_id);
 //                        SelectorFragment.adaptador.setCursor(
 //                                MainActivity.lugares.extraeCursor());
 //                        SelectorFragment.adaptador.notifyDataSetChanged();
-                        SelectorFragment selectorFragment = (SelectorFragment) getActivity().
-                                getSupportFragmentManager().findFragmentById(R.id.selector_fragment);
-                        if (selectorFragment == null) {
-                            getActivity().finish();
-                        } else {
-                            ((MainActivity) getActivity()).muestraLugar(0);
+                            SelectorFragment selectorFragment = (SelectorFragment) getActivity().
+                                    getSupportFragmentManager().findFragmentById(R.id.selector_fragment);
+                            if (selectorFragment == null) {
+                                getActivity().finish();
+                            } else {
+                                ((MainActivity) getActivity()).muestraLugar(0);
+                            }
                         }
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        }
     }
 
     public void llamadaTelefono(View view) {

@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class EdicionLugarActivity extends AppCompatActivity {
     private long id;
     //    private long _id;
@@ -83,6 +85,8 @@ public class EdicionLugarActivity extends AppCompatActivity {
 //                    _id = SelectorFragment.adaptador.idPosicion((int) id);
 //                }
 //                MainActivity.lugares.actualiza((int) _id, lugar);
+                if (id == -1)
+                    lugar.setUsuario(FirebaseAuth.getInstance().getUid());
                 MainActivity.lugares.actualiza(_id, lugar);
 //                SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //                if (id != -1) {
