@@ -20,7 +20,8 @@ import com.google.firebase.database.Query;
 public class SelectorFragment extends Fragment {
     private RecyclerView recyclerView;
     //    public static AdaptadorLugaresBD adaptador;
-    public static AdaptadorLugaresFirebaseUI adaptador;
+//    public static AdaptadorLugaresFirebaseUI adaptador;
+    public static AdaptadorLugaresFirebase adaptador;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
@@ -52,9 +53,11 @@ public class SelectorFragment extends Fragment {
 //            }
 //        });
 //        recyclerView.setAdapter(adaptador);
-        Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(50);
-        FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
-        adaptador = new AdaptadorLugaresFirebaseUI(opciones);
+
+//        Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(50);
+//        FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+//        adaptador = new AdaptadorLugaresFirebaseUI(opciones);
+        adaptador = new AdaptadorLugaresFirebase(getActivity(), FirebaseDatabase.getInstance().getReference().child("lugares"));
         adaptador.setOnItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

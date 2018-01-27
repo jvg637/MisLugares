@@ -33,6 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,6 +42,7 @@ import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.twitter.sdk.android.core.Twitter;
 
 import java.io.File;
 import java.io.IOException;
@@ -175,6 +177,11 @@ public class UsuarioFragment extends Fragment {
                 AuthUI.getInstance().signOut(getActivity()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+
+                        if (isFaceBookProvider()) {
+                            LoginManager.getInstance().logOut();
+                        }
+
                         Intent i = new Intent(getActivity(), CustomLoginActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(i);
@@ -306,6 +313,7 @@ public class UsuarioFragment extends Fragment {
 
         return vista;
     }
+
     // Foto de usuario
     private Uri urlImagen;
 
@@ -364,7 +372,7 @@ public class UsuarioFragment extends Fragment {
             tilCorreo.setError("Correo no válido");
         } else if (validaContraseña && contraseñaStr.isEmpty()) {
             tilPassword.setError("Introduce una contraseña");
-        }  else if (validaContraseña && contraseñaStr.length()<6) {
+        } else if (validaContraseña && contraseñaStr.length() < 6) {
             tilPassword.setError("Longitud contraseña <6");
         } else if (validaContraseña && !contraseñaStr.matches(".*[0-9].*")) {
             tilPassword.setError("Ha de contener un número");

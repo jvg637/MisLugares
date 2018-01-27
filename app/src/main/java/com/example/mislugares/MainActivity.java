@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
-//    public static LugaresBD lugares;
+    //    public static LugaresBD lugares;
     public static LugaresFirebase lugares;
     private LocationManager manejador;
     private Location mejorLocaliz;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
             }
         });
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
     }
 
     @Override

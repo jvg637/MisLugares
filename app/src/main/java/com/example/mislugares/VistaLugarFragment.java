@@ -39,6 +39,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -234,9 +236,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     private void mensaje(String mensaje) {
         Snackbar.make(contenedorMsg, mensaje, Snackbar.LENGTH_LONG).show();
     }
+
     //    public void borrarLugar(final int id) {
     public void borrarLugar() {
-        if (lugar.getUsuario()!=null && !lugar.getUsuario().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+        if (lugar.getUsuario() != null && !lugar.getUsuario().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
             mensaje("Sólo el creador del lugar puede realizar el borrado");
         else {
             new AlertDialog.Builder(getActivity())
@@ -323,26 +326,50 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         }
     }
 
-    public static Bitmap reduceBitmap(Context contexto, String uri,
-                                      int maxAncho, int maxAlto) {
+    public static Bitmap reduceBitmap(Context contexto, String uri, int maxAncho, int maxAlto) {
         try {
+            InputStream input = null;
+            Uri u = Uri.parse(uri);
+            if (u.getScheme().equals("http") || u.getScheme().equals("https")) {
+                input = new URL(uri).openStream();
+            } else {
+                input = contexto.getContentResolver().openInputStream(u);
+            }
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(contexto.getContentResolver()
-                    .openInputStream(Uri.parse(uri)), null, options);
-            options.inSampleSize = (int) Math.max(
-                    Math.ceil(options.outWidth / maxAncho),
-                    Math.ceil(options.outHeight / maxAlto));
+            options.inSampleSize = (int) Math.max(Math.ceil(options.outWidth / maxAncho), Math.ceil(options.outHeight / maxAlto));
             options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(contexto.getContentResolver()
-                    .openInputStream(Uri.parse(uri)), null, options);
+            return BitmapFactory.decodeStream(input, null, options);
         } catch (FileNotFoundException e) {
-            Toast.makeText(contexto, "Fichero/recurso no encontrado",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(contexto, "Fichero/recurso de imagen no encontrado", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            Toast.makeText(contexto, "Error accediendo a imagen", Toast.LENGTH_LONG).show();
             e.printStackTrace();
             return null;
         }
     }
+//    public static Bitmap reduceBitmap(Context contexto, String uri,
+//                                      int maxAncho, int maxAlto) {
+//        try {
+//            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            BitmapFactory.decodeStream(contexto.getContentResolver()
+//                    .openInputStream(Uri.parse(uri)), null, options);
+//            options.inSampleSize = (int) Math.max(
+//                    Math.ceil(options.outWidth / maxAncho),
+//                    Math.ceil(options.outHeight / maxAlto));
+//            options.inJustDecodeBounds = false;
+//            return BitmapFactory.decodeStream(contexto.getContentResolver()
+//                    .openInputStream(Uri.parse(uri)), null, options);
+//        } catch (FileNotFoundException e) {
+//            Toast.makeText(contexto, "Fichero/recurso no encontrado",
+//                    Toast.LENGTH_LONG).show();
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public void tomarFoto(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
