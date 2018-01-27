@@ -91,7 +91,7 @@ public class LugaresBD extends SQLiteOpenHelper implements Lugares  {
         bd.execSQL("INSERT INTO lugares (longitud, latitud, tipo, fecha) "+
                 "VALUES ( " + lugar.getPosicion().getLongitud()+","+
                 lugar.getPosicion().getLatitud()+", "+
-                lugar.getTipo().ordinal()+", "+lugar.getFecha()+")");
+                lugar.getTipoEnum().ordinal()+", "+lugar.getFecha()+")");
         Cursor c = bd.rawQuery("SELECT _id FROM lugares WHERE fecha = " +
                 lugar.getFecha(), null);
         if (c.moveToNext()){
@@ -121,7 +121,7 @@ public class LugaresBD extends SQLiteOpenHelper implements Lugares  {
                 "', direccion = '" + lugar.getDireccion() +
                 "', longitud = " + lugar.getPosicion().getLongitud() +
                 " , latitud = " + lugar.getPosicion().getLatitud() +
-                " , tipo = " + lugar.getTipo().ordinal() +
+                " , tipo = " + lugar.getTipoEnum().ordinal() +
                 " , foto = '" + lugar.getFoto() +
                 "', telefono = " + lugar.getTelefono() +
                 " , url = '" + lugar.getUrl() +
@@ -138,7 +138,7 @@ public class LugaresBD extends SQLiteOpenHelper implements Lugares  {
         lugar.setDireccion(cursor.getString(2));
         lugar.setPosicion(new GeoPunto(cursor.getDouble(3),
                 cursor.getDouble(4)));
-        lugar.setTipo(TipoLugar.values()[cursor.getInt(5)]);
+        lugar.setTipoEnum(TipoLugar.values()[cursor.getInt(5)]);
         lugar.setFoto(cursor.getString(6));
         lugar.setTelefono(cursor.getInt(7));
         lugar.setUrl(cursor.getString(8));

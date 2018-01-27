@@ -47,6 +47,8 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
+import static com.example.mislugares.Usuario.guardarUsuario;
+
 public class CustomLoginActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String correo = "";
@@ -142,6 +144,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
     private void verificaSiUsuarioValidado() {
         if (!unificar && auth.getCurrentUser() != null) {
+            guardarUsuario(auth.getCurrentUser());
             Intent i = new Intent(this, MainActivity.class);
             UsuarioFragment.passwordEmail = contraseña;
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

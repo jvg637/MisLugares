@@ -1,6 +1,5 @@
 package com.example.mislugares;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -25,6 +24,8 @@ import com.google.firebase.auth.UserInfo;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import static com.example.mislugares.Usuario.guardarUsuario;
 
 /**
  * Created by jvg63 on 13/01/2018.
@@ -60,7 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         if (usuario != null) {
 
 
-            if (providerCorreoVerificadoOtroAcceso(usuario)) {
+            if (providerCorreoVerificadoOOtroAcceso(usuario)) {
+                guardarUsuario(usuario);
                 Intent i = new Intent(this, MainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
@@ -90,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setIsSmartLockEnabled(false).build(), RC_SIGN_IN);
     }
 
-    private boolean providerCorreoVerificadoOtroAcceso(FirebaseUser usuario) {
+    private boolean providerCorreoVerificadoOOtroAcceso(FirebaseUser usuario) {
 //        if (usuario.getProviderId().equals("email")) {
         boolean loginByPassword = false;
         for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {

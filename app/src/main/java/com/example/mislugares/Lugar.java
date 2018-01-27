@@ -25,6 +25,7 @@ public class Lugar {
         this.comentario = comentario;
         this.valoracion = valoracion;
     }
+
     public Lugar() {
         fecha = System.currentTimeMillis();
         posicion = new GeoPunto(0, 0);
@@ -119,11 +120,11 @@ public class Lugar {
         this.valoracion = valoracion;
     }
 
-    public TipoLugar getTipo() {
+    public TipoLugar getTipoEnum() {
         return tipo;
     }
 
-    public void setTipo(TipoLugar tipo) {
+    public void setTipoEnum(TipoLugar tipo) {
         this.tipo = tipo;
     }
 
@@ -140,4 +141,15 @@ public class Lugar {
         this.comentario = comentario;
         this.valoracion = valoracion;
     }
+
+    public String getTipo() {
+        if (tipo == null) return null;
+        else return tipo.name();
+    }
+
+    public void setTipo(String nombre) {
+        if (nombre == null) tipo = null;
+        else tipo = TipoLugar.valueOf(nombre);
+    }
+
 }

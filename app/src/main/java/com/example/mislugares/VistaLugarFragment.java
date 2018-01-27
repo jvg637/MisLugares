@@ -10,13 +10,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -56,7 +54,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
                              Bundle savedInstanceState) {
-        View vista = inflador.inflate(R.layout.vista_lugar,contenedor,false);
+        View vista = inflador.inflate(R.layout.vista_lugar, contenedor, false);
         setHasOptionsMenu(true);
         LinearLayout pUrl = (LinearLayout) vista.findViewById(R.id.barra_url);
         pUrl.setOnClickListener(new View.OnClickListener() {
@@ -78,17 +76,20 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         });
         ImageView iconoFoto = (ImageView) vista.findViewById(R.id.camara);
         iconoFoto.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) { tomarFoto(null);
+            public void onClick(View view) {
+                tomarFoto(null);
             }
         });
         ImageView iconoGaleria = (ImageView) vista.findViewById(R.id.galeria);
         iconoGaleria.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) { galeria(null);
+            public void onClick(View view) {
+                galeria(null);
             }
         });
         ImageView iconoBorra = (ImageView) vista.findViewById(R.id.eliminarFoto);
         iconoBorra.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) { eliminarFoto(null);
+            public void onClick(View view) {
+                eliminarFoto(null);
             }
         });
         ImageView iconoHora = (ImageView) vista.findViewById(R.id.icono_hora);
@@ -123,60 +124,61 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         //lugar = MainActivity.lugares.elemento((int) id);
         //lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
         this.id = id;
-        lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
+//        lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
+        lugar = SelectorFragment.adaptador.getItem((int) id);
         if (lugar != null) {
 
-        TextView nombre = (TextView) v.findViewById(R.id.nombre);
-        nombre.setText(lugar.getNombre());
-        ImageView logo_tipo = (ImageView) v.findViewById(R.id.logo_tipo);
-        logo_tipo.setImageResource(lugar.getTipo().getRecurso());
-        TextView tipo = (TextView) v.findViewById(R.id.tipo);
-        tipo.setText(lugar.getTipo().getTexto());
+            TextView nombre = (TextView) v.findViewById(R.id.nombre);
+            nombre.setText(lugar.getNombre());
+            ImageView logo_tipo = (ImageView) v.findViewById(R.id.logo_tipo);
+            logo_tipo.setImageResource(lugar.getTipoEnum().getRecurso());
+            TextView tipo = (TextView) v.findViewById(R.id.tipo);
+            tipo.setText(lugar.getTipoEnum().getTexto());
 
-        if (lugar.getDireccion().isEmpty()) {
-            v.findViewById(R.id.barra_direccion).setVisibility(View.GONE);
-        } else {
-            TextView direccion = (TextView) v.findViewById(R.id.direccion);
-            direccion.setText(lugar.getDireccion());
+            if (lugar.getDireccion().isEmpty()) {
+                v.findViewById(R.id.barra_direccion).setVisibility(View.GONE);
+            } else {
+                TextView direccion = (TextView) v.findViewById(R.id.direccion);
+                direccion.setText(lugar.getDireccion());
+            }
+            if (lugar.getTelefono() == 0) {
+                v.findViewById(R.id.barra_telefono).setVisibility(View.GONE);
+            } else {
+                TextView telefono = (TextView) v.findViewById(R.id.telefono);
+                telefono.setText(Integer.toString(lugar.getTelefono()));
+            }
+            if (lugar.getUrl().isEmpty()) {
+                v.findViewById(R.id.barra_url).setVisibility(View.GONE);
+            } else {
+                TextView url = (TextView) v.findViewById(R.id.url);
+                url.setText(lugar.getUrl());
+            }
+            if (lugar.getComentario().isEmpty()) {
+                v.findViewById(R.id.barra_comentario).setVisibility(View.GONE);
+            } else {
+                TextView comentario = (TextView) v.findViewById(R.id.comentario);
+                comentario.setText(lugar.getComentario());
+            }
+            TextView fecha = (TextView) v.findViewById(R.id.fecha);
+            fecha.setText(DateFormat.getDateInstance().format(
+                    new Date(lugar.getFecha())));
+            TextView hora = (TextView) v.findViewById(R.id.hora);
+            hora.setText(DateFormat.getTimeInstance().format(
+                    new Date(lugar.getFecha())));
+            RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
+            valoracion.setOnRatingBarChangeListener(null);
+            valoracion.setRating(lugar.getValoracion());
+            valoracion.setOnRatingBarChangeListener(
+                    new RatingBar.OnRatingBarChangeListener() {
+                        @Override
+                        public void onRatingChanged(RatingBar ratingBar,
+                                                    float valor, boolean fromUser) {
+                            lugar.setValoracion(valor);
+                            actualizaLugar();
+                        }
+                    });
+            ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
         }
-        if (lugar.getTelefono() == 0) {
-            v.findViewById(R.id.barra_telefono).setVisibility(View.GONE);
-        } else {
-            TextView telefono = (TextView) v.findViewById(R.id.telefono);
-            telefono.setText(Integer.toString(lugar.getTelefono()));
-        }
-        if (lugar.getUrl().isEmpty()) {
-            v.findViewById(R.id.barra_url).setVisibility(View.GONE);
-        } else {
-            TextView url = (TextView) v.findViewById(R.id.url);
-            url.setText(lugar.getUrl());
-        }
-        if (lugar.getComentario().isEmpty()) {
-            v.findViewById(R.id.barra_comentario).setVisibility(View.GONE);
-        } else {
-            TextView comentario = (TextView) v.findViewById(R.id.comentario);
-            comentario.setText(lugar.getComentario());
-        }
-        TextView fecha = (TextView) v.findViewById(R.id.fecha);
-        fecha.setText(DateFormat.getDateInstance().format(
-                new Date(lugar.getFecha())));
-        TextView hora = (TextView) v.findViewById(R.id.hora);
-        hora.setText(DateFormat.getTimeInstance().format(
-                new Date(lugar.getFecha())));
-        RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
-        valoracion.setOnRatingBarChangeListener(null);
-        valoracion.setRating(lugar.getValoracion());
-        valoracion.setOnRatingBarChangeListener(
-                new RatingBar.OnRatingBarChangeListener() {
-                    @Override
-                    public void onRatingChanged(RatingBar ratingBar,
-                                                float valor, boolean fromUser) {
-                        lugar.setValoracion(valor);
-                        actualizaLugar();
-                    }
-                });
-        ponerFoto((ImageView)v.findViewById(R.id.foto), lugar.getFoto());
-    }
     }
 
     @Override
@@ -202,8 +204,9 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                 lanzarEdicionLugar(id);
                 return true;
             case R.id.accion_borrar:
-                int _id = SelectorFragment.adaptador.idPosicion((int) id);
-                borrarLugar((int) _id);
+//                int _id = SelectorFragment.adaptador.idPosicion((int) id);
+//                borrarLugar((int) _id);
+                borrarLugar();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -223,17 +226,19 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         startActivity(intent);
     }
 
-    public void borrarLugar(final int id) {
+    //    public void borrarLugar(final int id) {
+    public void borrarLugar() {
         new AlertDialog.Builder(getActivity())
                 .setTitle("Borrado de lugar")
                 .setMessage("¿Estás seguro que quieres eliminar este lugar?")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MainActivity.lugares.borrar(id);
-                        SelectorFragment.adaptador.setCursor(
-                                MainActivity.lugares.extraeCursor());
-                        SelectorFragment.adaptador.notifyDataSetChanged();
+                        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+                        MainActivity.lugares.borrar(_id);
+//                        SelectorFragment.adaptador.setCursor(
+//                                MainActivity.lugares.extraeCursor());
+//                        SelectorFragment.adaptador.notifyDataSetChanged();
                         SelectorFragment selectorFragment = (SelectorFragment) getActivity().
                                 getSupportFragmentManager().findFragmentById(R.id.selector_fragment);
                         if (selectorFragment == null) {
@@ -278,14 +283,15 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 
         if (uri != null && !uri.isEmpty() && !uri.equals("null")) {
             if (uri.startsWith("content://com.example.mislugares/") ||
-                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
-                        READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-               imageView.setImageBitmap(reduceBitmap(getActivity(), uri, 1024,   1024));
-            } else  {
-                    lastImageView=imageView; lastUri=uri;
-                    PermisosUtilidades.solicitarPermisoFragment(Manifest.permission.
-                          READ_EXTERNAL_STORAGE, "Sin permiso de lectura no es posible "+
-                          "mostrar fotos de memoria externa", SOLICITUD_PERMISO_LECTURA, this);
+                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
+                            READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                imageView.setImageBitmap(reduceBitmap(getActivity(), uri, 1024, 1024));
+            } else {
+                lastImageView = imageView;
+                lastUri = uri;
+                PermisosUtilidades.solicitarPermisoFragment(Manifest.permission.
+                        READ_EXTERNAL_STORAGE, "Sin permiso de lectura no es posible " +
+                        "mostrar fotos de memoria externa", SOLICITUD_PERMISO_LECTURA, this);
             }
         } else {
             imageView.setImageBitmap(null);
@@ -296,7 +302,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         if (requestCode == SOLICITUD_PERMISO_LECTURA) {
-            if (grantResults.length== 1 &&
+            if (grantResults.length == 1 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 ponerFoto(lastImageView, lastUri);
             } else {
@@ -333,10 +339,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             File file = null;
             try {
                 file = File.createTempFile(
-                    "img_" + (System.currentTimeMillis() / 1000),       // nombre
-                    ".jpg",                                             // extensión
-                    //Environment.getExternalStoragePublicDirectory("")
-                    getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)); // directorio
+                        "img_" + (System.currentTimeMillis() / 1000),       // nombre
+                        ".jpg",                                             // extensión
+                        //Environment.getExternalStoragePublicDirectory("")
+                        getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)); // directorio
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
@@ -366,7 +372,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 
     public void eliminarFoto(View view) {
         lugar.setFoto(null);
-        ponerFoto((ImageView)v.findViewById(R.id.foto), ""); //null);
+        ponerFoto((ImageView) v.findViewById(R.id.foto), ""); //null);
         actualizaLugar();
     }
 
@@ -383,7 +389,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         } else if (requestCode == RESULTADO_GALERIA) {
             if (resultCode == Activity.RESULT_OK) {
                 lugar.setFoto(data.getDataString());
-                ponerFoto((ImageView)v.findViewById(R.id.foto), lugar.getFoto());
+                ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
                 actualizaLugar();
             } else {
                 Toast.makeText(getActivity(), "Error carfando foto", Toast.LENGTH_LONG).show();
@@ -392,7 +398,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             if (resultCode == Activity.RESULT_OK
                     && lugar != null && uriFoto != null) {
                 lugar.setFoto(uriFoto.toString());
-                ponerFoto((ImageView)v.findViewById(R.id.foto), lugar.getFoto());
+                ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
                 actualizaLugar();
             } else {
                 Toast.makeText(getActivity(), "Error capturando foto", Toast.LENGTH_LONG).show();
@@ -400,12 +406,14 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         }
     }
 
-    void actualizaLugar(){
-        int _id = SelectorFragment.adaptador.idPosicion((int) id);
-        MainActivity.lugares.actualiza(_id, lugar);
-        SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
+    void actualizaLugar() {
+//        int _id = SelectorFragment.adaptador.idPosicion((int) id);
+//        MainActivity.lugares.actualiza(_id, lugar);
+//        SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //        SelectorFragment.adaptador.notifyItemChanged((int) id);
-        SelectorFragment.adaptador.notifyDataSetChanged();
+//        SelectorFragment.adaptador.notifyDataSetChanged();
+        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+        MainActivity.lugares.actualiza(_id, lugar);
     }
 
     public void cambiarHora() {
@@ -450,7 +458,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         lugar.setFecha(calendario.getTimeInMillis());
         actualizaLugar();
         TextView tFecha = (TextView) getView().findViewById(R.id.fecha);
-        DateFormat formato =  DateFormat.getDateInstance();
+        DateFormat formato = DateFormat.getDateInstance();
         tFecha.setText(formato.format(new Date(lugar.getFecha())));
     }
 }

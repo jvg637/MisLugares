@@ -1,7 +1,6 @@
 package com.example.mislugares;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,13 +9,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -24,9 +19,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    public static LugaresBD lugares;
+//    public static LugaresBD lugares;
+    public static LugaresFirebase lugares;
     private LocationManager manejador;
     private Location mejorLocaliz;
     private static final int SOLICITUD_PERMISO_LOCALIZACION = 0;
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lugares = new LugaresBD(this);
+//        lugares = new LugaresBD(this);
+        lugares = new LugaresFirebase();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentVista = (VistaLugarFragment) getSupportFragmentManager()
@@ -46,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long _id = lugares.nuevo();
+//                long _id = lugares.nuevo();
+                String _id = lugares.nuevo();
                 Intent i = new Intent(MainActivity.this, EdicionLugarActivity.class);
                 i.putExtra("_id", _id);
                 startActivity(i);
@@ -54,6 +58,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
         manejador = (LocationManager) getSystemService(LOCATION_SERVICE);
         ultimaLocalizazion();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("mensaje");
+//        myRef.setValue("¡Hola, Mundo!");
+        String key = database.getReference().push().getKey();
+        database.getReference(key).setValue("nuevo item creado");
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+                Log.d("Ejemplo Firebase", "Valor: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
+            }
+        });
     }
 
     @Override
@@ -246,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         if (requestCode == RESULTADO_PREFERENCIAS) {
-            SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
+//            SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
             SelectorFragment.adaptador.notifyDataSetChanged();
         }
     }

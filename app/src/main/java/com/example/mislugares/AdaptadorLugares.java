@@ -2,7 +2,6 @@ package com.example.mislugares;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,11 +58,11 @@ public class AdaptadorLugares extends
     }
 
     // Personalizamos un ViewHolder a partir de un lugar
-    public void personalizaVista(ViewHolder holder, Lugar lugar) {
+    public static void personalizaVista(ViewHolder holder, Lugar lugar) {
         holder.nombre.setText(lugar.getNombre());
         holder.direccion.setText(lugar.getDireccion());
         int id = R.drawable.otros;
-        switch(lugar.getTipo()) {
+        switch(lugar.getTipoEnum()) {
             case RESTAURANTE:id = R.drawable.restaurante; break;
             case BAR:        id = R.drawable.bar;         break;
             case COPAS:      id = R.drawable.copas;       break;
