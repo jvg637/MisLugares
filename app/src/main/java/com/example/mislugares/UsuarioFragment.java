@@ -174,13 +174,15 @@ public class UsuarioFragment extends Fragment {
         cerrarSesion = (Button) vista.findViewById(R.id.btn_cerrar_sesion);
         cerrarSesion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if (isFaceBookProvider()) {
+                    LoginManager.getInstance().logOut();
+                }
+
+
                 AuthUI.getInstance().signOut(getActivity()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-                        if (isFaceBookProvider()) {
-                            LoginManager.getInstance().logOut();
-                        }
 
                         Intent i = new Intent(getActivity(), CustomLoginActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

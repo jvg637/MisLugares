@@ -44,6 +44,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/valoracion"
+        android:layout_toEndOf="@id/valoracion"
         android:gravity="end"
-        android:text="... Km" />
+        android:text=" ... Km" />
 </RelativeLayout>

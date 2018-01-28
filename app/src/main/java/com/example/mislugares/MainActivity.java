@@ -60,25 +60,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         manejador = (LocationManager) getSystemService(LOCATION_SERVICE);
         ultimaLocalizazion();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("mensaje");
-//        myRef.setValue("¡Hola, Mundo!");
-        String key = database.getReference().push().getKey();
-        database.getReference(key).setValue("nuevo item creado");
-
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("Ejemplo Firebase", "Valor: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
-            }
-        });
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("mensaje");
+////        myRef.setValue("¡Hola, Mundo!");
+//        String key = database.getReference().push().getKey();
+//        database.getReference(key).setValue("nuevo item creado");
+//
+//
+//        myRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String value = dataSnapshot.getValue(String.class);
+//                Log.d("Ejemplo Firebase", "Valor: " + value);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
+//            }
+//        });
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
     }
 

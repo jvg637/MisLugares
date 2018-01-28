@@ -2,6 +2,7 @@ package com.example.mislugares;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,7 @@ public class AdaptadorLugares extends
                 holder.distancia.setText(d / 1000 + " Km");
             }
         }
-        //holder.distancia.setGravity(Gravity.RIGHT);
+//        holder.distancia.setGravity(Gravity.END);
     }
 
     // Indicamos el número de elementos de la lista
