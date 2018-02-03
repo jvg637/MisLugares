@@ -5,19 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 /**
- * Created by jvg63 on 26/01/2018.
+ * Created by jvg63 on 28/01/2018.
  */
 
-public class AdaptadorLugaresFirebaseUI extends FirebaseRecyclerAdapter<Lugar, AdaptadorLugares.ViewHolder> {
-
+public class AdaptadorLugaresFirestoreUI extends FirestoreRecyclerAdapter<Lugar, AdaptadorLugares.ViewHolder> {
     protected View.OnClickListener onClickListener;
 
-    public AdaptadorLugaresFirebaseUI(@NonNull FirebaseRecyclerOptions<Lugar> opciones) {
-        super(opciones);
+    public AdaptadorLugaresFirestoreUI(@NonNull FirestoreRecyclerOptions<Lugar> options) {
+        super(options);
     }
 
     @Override
@@ -36,8 +35,8 @@ public class AdaptadorLugaresFirebaseUI extends FirebaseRecyclerAdapter<Lugar, A
         onClickListener = onClick;
     }
 
-
     public String getKey(int pos) {
-        return super.getSnapshots().getSnapshot(pos).getKey();
+        return super.getSnapshots().getSnapshot(pos).getId();
     }
+
 }

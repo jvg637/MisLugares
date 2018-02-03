@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -20,16 +21,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     //    public static LugaresBD lugares;
-    public static LugaresFirebase lugares;
+    public static LugaresAsinc lugares;
     private LocationManager manejador;
     private Location mejorLocaliz;
     private static final int SOLICITUD_PERMISO_LOCALIZACION = 0;
@@ -41,7 +53,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        lugares = new LugaresBD(this);
-        lugares = new LugaresFirebase();
+        // RT Database
+//        lugares = new LugaresFirebase();
+        // FireStore
+        lugares = new LugaresFirestore();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentVista = (VistaLugarFragment) getSupportFragmentManager()
@@ -80,6 +95,60 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //            }
 //        });
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+//
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        for (Lugar lugar : LugaresVector.ejemploLugaresConFoto()) {
+//            db.collection("lugares").add(lugar);
+//        }
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        Map<String, Object> user = new HashMap<>();
+//        user.put("first", "Ada");
+//        user.put("last", "Lovelace");
+//        user.put("born", 1815);
+
+// Add a new document with a generated ID
+//        db.collection("users")
+//                .add(user)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        Log.d("TRAZA", "DocumentSnapshot added with ID: " + documentReference.getId());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w("TRAZA", "Error adding document", e);
+//                    }
+//                });
+
+        // Create a new user with a first, middle, and last name
+//        Map<String, Object> user = new HashMap<>();
+//        user.put("first", "Alan");
+//        user.put("middle", "Mathison");
+//        user.put("last", "Turring");
+//        user.put("born", 1912);
+//
+//// Add a new document with a generated ID
+//        db.collection("users")
+//                .add(user);
+
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                Log.d("TRAZA", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.w("TRAZA", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
     @Override

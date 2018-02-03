@@ -37,7 +37,9 @@ public class EdicionLugarActivity extends AppCompatActivity {
         } else {
 //            lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
             lugar = SelectorFragment.adaptador.getItem((int) id);
-            _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+            // Firebase Database
+//            _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+            _id = SelectorFragment.adaptador.getKey((int) id);
         }
         nombre = (EditText) findViewById(R.id.nombre);
         nombre.setText(lugar.getNombre());
@@ -85,8 +87,9 @@ public class EdicionLugarActivity extends AppCompatActivity {
 //                    _id = SelectorFragment.adaptador.idPosicion((int) id);
 //                }
 //                MainActivity.lugares.actualiza((int) _id, lugar);
-                if (id == -1)
+                if (id == -1) {
                     lugar.setUsuario(FirebaseAuth.getInstance().getUid());
+                }
                 MainActivity.lugares.actualiza(_id, lugar);
 //                SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //                if (id != -1) {

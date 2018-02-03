@@ -57,7 +57,7 @@ public class LugaresFirebase implements LugaresAsinc {
         nodo.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Lugar lugar = dataSnapshot.getValue(Lugar.class);
+//                Lugar lugar = dataSnapshot.getValue(Lugar.class);
                 escuchador.onRespuesta(dataSnapshot.getChildrenCount());
             }
 

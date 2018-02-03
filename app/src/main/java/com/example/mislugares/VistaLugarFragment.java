@@ -248,7 +248,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                     .setCancelable(false)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+                            // FIREBASE DATABASE
+//                            String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+                            // FIREBASE FIRESTORE
+                            String _id = SelectorFragment.adaptador.getKey((int) id);
                             MainActivity.lugares.borrar(_id);
 //                        SelectorFragment.adaptador.setCursor(
 //                                MainActivity.lugares.extraeCursor());
@@ -451,7 +454,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 //        SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //        SelectorFragment.adaptador.notifyItemChanged((int) id);
 //        SelectorFragment.adaptador.notifyDataSetChanged();
-        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+        // FIREBASE DATABASE
+//        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
+        // FIREBASE FIRESTORE
+        String _id = SelectorFragment.adaptador.getKey((int) id);
         MainActivity.lugares.actualiza(_id, lugar);
     }
 

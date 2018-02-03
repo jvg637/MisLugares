@@ -152,6 +152,21 @@ public class Lugar {
         this.valoracion = valoracion;
     }
 
+    public Lugar(String nombre, String direccion, double longitud,
+                 double latitud, TipoLugar tipo, int telefono, String url, String comentario,
+                 int valoracion, String foto) {
+        fecha = System.currentTimeMillis();
+        posicion = new GeoPunto(longitud, latitud);
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.tipo = tipo;
+        this.url = url;
+        this.comentario = comentario;
+        this.valoracion = valoracion;
+        this.foto = foto;
+    }
+
     public String getTipo() {
         if (tipo == null) return null;
         else return tipo.name();

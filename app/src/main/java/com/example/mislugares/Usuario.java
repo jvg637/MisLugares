@@ -2,6 +2,7 @@ package com.example.mislugares;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Created by jvg63 on 26/01/2018.
@@ -53,5 +54,8 @@ public class Usuario {
         Usuario usuario = new Usuario(user.getDisplayName(), user.getEmail());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("usuarios/" + user.getUid()).setValue(usuario);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("usuarios").document(user.getUid()).set(usuario);
     }
 }
