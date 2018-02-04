@@ -50,7 +50,7 @@ public class MapaActivity extends FragmentActivity
             GeoPunto p = lugar.getPosicion();
             if (p != null && p.getLatitud() != 0) {
                 BitmapDrawable iconoDrawable = (BitmapDrawable) getResources()
-                        .getDrawable(lugar.getTipoEnum().getRecurso());
+                        .getDrawable(lugar.getTipo().getRecurso());
                 Bitmap iGrande = iconoDrawable.getBitmap();
                 Bitmap icono = Bitmap.createScaledBitmap(iGrande,
                         iGrande.getWidth() / 7, iGrande.getHeight() / 7, false);

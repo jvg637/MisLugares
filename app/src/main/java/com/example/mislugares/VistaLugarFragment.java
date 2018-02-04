@@ -138,9 +138,9 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             TextView nombre = (TextView) v.findViewById(R.id.nombre);
             nombre.setText(lugar.getNombre());
             ImageView logo_tipo = (ImageView) v.findViewById(R.id.logo_tipo);
-            logo_tipo.setImageResource(lugar.getTipoEnum().getRecurso());
+            logo_tipo.setImageResource(lugar.getTipo().getRecurso());
             TextView tipo = (TextView) v.findViewById(R.id.tipo);
-            tipo.setText(lugar.getTipoEnum().getTexto());
+            tipo.setText(lugar.getTipo().getTexto());
 
             if (lugar.getDireccion().isEmpty()) {
                 v.findViewById(R.id.barra_direccion).setVisibility(View.GONE);

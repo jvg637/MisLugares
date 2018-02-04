@@ -2,7 +2,6 @@ package com.example.mislugares;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +62,7 @@ public class AdaptadorLugares extends
         holder.nombre.setText(lugar.getNombre());
         holder.direccion.setText(lugar.getDireccion());
         int id = R.drawable.otros;
-        switch(lugar.getTipoEnum()) {
+        switch(lugar.getTipo()) {
             case RESTAURANTE:id = R.drawable.restaurante; break;
             case BAR:        id = R.drawable.bar;         break;
             case COPAS:      id = R.drawable.copas;       break;

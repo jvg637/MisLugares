@@ -57,7 +57,7 @@ public class EdicionLugarActivity extends AppCompatActivity {
         adaptador.setDropDownViewResource(android.R.layout.
                 simple_spinner_dropdown_item);
         tipo.setAdapter(adaptador);
-        tipo.setSelection(lugar.getTipoEnum().ordinal());
+        tipo.setSelection(lugar.getTipo().ordinal());
     }
 
     @Override
@@ -78,7 +78,7 @@ public class EdicionLugarActivity extends AppCompatActivity {
                 return true;
             case R.id.accion_guardar:
                 lugar.setNombre(nombre.getText().toString());
-                lugar.setTipoEnum(TipoLugar.values()[tipo.getSelectedItemPosition()]);
+                lugar.setTipo(TipoLugar.values()[tipo.getSelectedItemPosition()]);
                 lugar.setDireccion(direccion.getText().toString());
                 lugar.setTelefono(Integer.parseInt(telefono.getText().toString()));
                 lugar.setUrl(url.getText().toString());

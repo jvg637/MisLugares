@@ -95,7 +95,7 @@ public class SelectorFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         adaptador.stopListening();
+        super.onDestroy();
     }
 }

@@ -1,5 +1,9 @@
 package com.example.mislugares;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class Lugar {
     private String nombre;
     private String direccion;
@@ -130,11 +134,11 @@ public class Lugar {
         this.valoracion = valoracion;
     }
 
-    public TipoLugar getTipoEnum() {
+    public TipoLugar getTipo() {
         return tipo;
     }
 
-    public void setTipoEnum(TipoLugar tipo) {
+    public void setTipo(TipoLugar tipo) {
         this.tipo = tipo;
     }
 
@@ -167,14 +171,23 @@ public class Lugar {
         this.foto = foto;
     }
 
-    public String getTipo() {
-        if (tipo == null) return null;
-        else return tipo.name();
-    }
+//    public String getTipo() {
+//        if (tipo == null) return null;
+//        else return tipo.name();
+//    }
+//
+//    public void setTipo(String nombre) {
+//        if (nombre == null) tipo = null;
+//        else tipo = TipoLugar.valueOf(nombre);
+//    }
 
-    public void setTipo(String nombre) {
-        if (nombre == null) tipo = null;
-        else tipo = TipoLugar.valueOf(nombre);
+    static void guardarValoracion(final FirebaseUser user) {
+        Usuario usuario = new Usuario(user.getDisplayName(), user.getEmail());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("usuarios/" + user.getUid()).setValue(usuario);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("usuarios").document(user.getUid()).set(usuario);
     }
 
 }
