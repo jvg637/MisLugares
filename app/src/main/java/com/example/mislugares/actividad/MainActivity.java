@@ -56,13 +56,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //        lugares = new LugaresFirebase();
         // FireStore
 //        lugares = new LugaresFirestore();
-        Preferencias pref = Preferencias.getInstance();
-        pref.inicializa(this);
-        if (pref.usarFirestore() ){
-            lugares = new LugaresFirestore();
-        } else {
-            lugares = new LugaresFirebase();
-        }
+
+        inicializaDB();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -156,6 +151,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //                        }
 //                    }
 //                });
+    }
+
+    private void inicializaDB() {
+        Preferencias pref = Preferencias.getInstance();
+        pref.inicializa(this);
+
+        if (pref.usarFirestore() ){
+            lugares = new LugaresFirestore();
+        } else {
+            lugares = new LugaresFirebase();
+        }
     }
 
     @Override
@@ -351,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //            SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
             SelectorFragment selectorFragment = (SelectorFragment) getSupportFragmentManager().findFragmentById(R.id.selector_fragment);
             selectorFragment.ponerAdaptador();
+            inicializaDB();
             SelectorFragment.adaptador.notifyDataSetChanged();
         }
     }
