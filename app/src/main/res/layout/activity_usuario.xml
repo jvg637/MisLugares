@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/usuario_fragment"
-        android:name="com.example.mislugares.UsuarioFragment"
+        android:name="com.example.mislugares.fragment.UsuarioFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

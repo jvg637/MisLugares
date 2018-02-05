@@ -5,19 +5,40 @@
         android:key="notificaciones"
         android:summary="Notificar si estamos cerca de un lugar"
         android:title="Mandar notificaciones" />
-    <EditTextPreference
-        android:defaultValue="12"
-        android:inputType="number"
-        android:key="maximo"
-        android:summary="Limita en número de valores que se muestran en la lista"
-        android:title="Máximo de lugaares a mostrar" />
+
+    <!--<ListPreference-->
+    <!--android:defaultValue="valoracion"-->
+    <!--android:entries="@array/tiposOrden"-->
+    <!--android:entryValues="@array/tiposOrdenValores"-->
+    <!--android:key="orden"-->
+    <!--android:summary="Que lugares quieres que aparezcan antes"-->
+    <!--android:title="Criterio de ordenación" />-->
     <ListPreference
         android:defaultValue="1"
+        android:entries="@array/tiposSeleccion"
+        android:entryValues="@array/tiposSeleccionValores"
+        android:key="seleccion"
+        android:summary="Que lugares quieres que se muestren"
+        android:title="Criterio de selección" />
+    <EditTextPreference
+        android:defaultValue="BAR"
+        android:inputType="textCapCharacters"
+        android:key="tipo_seleccion"
+        android:summary="Si criterio de selección es tipo, el tipo a mostrar"
+        android:title="Tipo de lugares a mostrar" />
+    <ListPreference
+        android:defaultValue="fecha"
         android:entries="@array/tiposOrden"
         android:entryValues="@array/tiposOrdenValores"
         android:key="orden"
         android:summary="Que lugares quieres que aparezcan antes"
         android:title="Criterio de ordenación" />
+    <EditTextPreference
+        android:defaultValue="12"
+        android:inputType="number"
+        android:key="maximo"
+        android:summary="Limita en número de valores que se muestran en la lista"
+        android:title="Máximo de lugares a mostrar" />
     <CheckBoxPreference
         android:key="firestore"
         android:summary="Usar Cloud Firestore en lugar de Realtime Database"

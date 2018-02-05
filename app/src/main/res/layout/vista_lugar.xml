@@ -138,6 +138,11 @@
                 android:text="hora"
                 android:layout_weight="1" />
         </LinearLayout>
+        <TextView
+            android:id="@+id/lblValoracion"
+            android:layout_width="match_parent"
+            android:visibility="invisible"
+            android:layout_height="wrap_content" android:text="Por favor, puntúa este lugar" />
         <RatingBar
             android:id="@+id/valoracion"
             android:layout_width="wrap_content"
