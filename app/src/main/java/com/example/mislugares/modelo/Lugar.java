@@ -11,6 +11,7 @@ public class Lugar {
     private long fecha;
     private float valoracion;
     private TipoLugar tipo;
+    private long n_valoraciones;
 
     public String getUsuario() {
         return usuario;
@@ -40,6 +41,7 @@ public class Lugar {
         fecha = System.currentTimeMillis();
         posicion = new GeoPunto(0, 0);
         tipo = TipoLugar.OTROS;
+        n_valoraciones = 0;
     }
 
     public String getNombre() {
@@ -165,6 +167,14 @@ public class Lugar {
         this.comentario = comentario;
         this.valoracion = valoracion;
         this.foto = foto;
+    }
+
+    public long getN_valoraciones() {
+        return n_valoraciones;
+    }
+
+    public void setN_valoraciones(long n_valoraciones) {
+        this.n_valoraciones = n_valoraciones;
     }
 
 //    public String getTipo() {

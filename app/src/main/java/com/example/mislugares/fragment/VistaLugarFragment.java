@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +35,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.mislugares.almacenamiento.LugaresFirebase;
+import com.example.mislugares.almacenamiento.LugaresFirestore;
+import com.example.mislugares.almacenamiento.ValoracionesFirestore;
 import com.example.mislugares.utilidades.DialogoSelectorFecha;
 import com.example.mislugares.utilidades.DialogoSelectorHora;
 import com.example.mislugares.actividad.EdicionLugarActivity;
@@ -43,6 +47,7 @@ import com.example.mislugares.utilidades.PermisosUtilidades;
 import com.example.mislugares.R;
 import com.example.mislugares.modelo.Usuario;
 import com.example.mislugares.actividad.MainActivity;
+import com.example.mislugares.utilidades.Preferencias;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
@@ -187,31 +192,71 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             final RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
             valoracion.setOnRatingBarChangeListener(null);
 
-            MainActivity.lugares.getValoracionUsuario(SelectorFragment.getAdaptador().getKey((int) id), FirebaseAuth.getInstance().getCurrentUser().getUid(), new LugaresAsinc.EscuchadorValoracionUsuario() {
-                @Override
-                public void onRespuesta(float valoracionUsuario) {
-                    if (valoracionUsuario != -1) {
-                        valoracion.setRating(valoracionUsuario);
-                        primeraValoracion(false);
-                    } else {
-                        valoracion.setRating(0);
+            // FIREBASE DATABASE
+            Preferencias pref = Preferencias.getInstance();
+            pref.inicializa(getContext());
+
+            if (!pref.usarFirestore()) {
+
+
+                MainActivity.lugares.getValoracionUsuario(SelectorFragment.getAdaptador().getKey((int) id), FirebaseAuth.getInstance().getCurrentUser().getUid(), new LugaresAsinc.EscuchadorValoracionUsuario() {
+                    @Override
+                    public void onRespuesta(float valoracionUsuario) {
+                        if (valoracionUsuario != -1) {
+                            valoracion.setRating(valoracionUsuario);
+                            primeraValoracion(false);
+                        } else {
+                            valoracion.setRating(0);
+                            primeraValoracion(true);
+                        }
+
+                        //            valoracion.setRating(lugar.getValoracion());
+                        valoracion.setOnRatingBarChangeListener(
+                                new RatingBar.OnRatingBarChangeListener() {
+                                    @Override
+                                    public void onRatingChanged(RatingBar ratingBar,
+                                                                float valor, boolean fromUser) {
+//                            lugar.setValoracion(valor);
+                                        primeraValoracion(false);
+                                        String _id = SelectorFragment.getAdaptador().getKey((int) id);
+                                        String usuario = FirebaseAuth.getInstance().getUid();
+                                        // FIREBASE DB
+                                        Usuario.guardarValoracionUsuario(usuario, _id, valor);
+//                            actualizaLugar();
+                                    }
+                                });
+                    }
+                });
+            } else {
+
+                final String _id = SelectorFragment.getAdaptador().getKey((int) id);
+                final String usuario = FirebaseAuth.getInstance().getUid();
+                ValoracionesFirestore.leerValoracion(_id, usuario, new ValoracionesFirestore.EscuchadorValoracion() {
+                    @Override
+                    public void onNoExiste() {
+                        this.onRespuesta(0.0);
                         primeraValoracion(true);
                     }
 
-                    //            valoracion.setRating(lugar.getValoracion());
-                    valoracion.setOnRatingBarChangeListener(
-                            new RatingBar.OnRatingBarChangeListener() {
-                                @Override
-                                public void onRatingChanged(RatingBar ratingBar,
-                                                            float valor, boolean fromUser) {
-//                            lugar.setValoracion(valor);
-                                    primeraValoracion(false);
-                                    Usuario.guardarValoracionUsuario(FirebaseAuth.getInstance().getCurrentUser(), SelectorFragment.getAdaptador().getKey((int) id), valor);
-//                            actualizaLugar();
-                                }
-                            });
-                }
-            });
+                    @Override
+                    public void onRespuesta(Double valor) {
+                        valoracion.setOnRatingBarChangeListener(null);
+                        valoracion.setRating(valor.floatValue());
+                        valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                            @Override
+                            public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
+//                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
+                                primeraValoracion(false);
+                                ValoracionesFirestore.guardarValoracionYRecalcular(_id, usuario, valor);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                    }
+                });
+            }
 
             ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
         }
