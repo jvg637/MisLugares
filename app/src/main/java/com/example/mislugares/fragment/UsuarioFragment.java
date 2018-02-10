@@ -482,41 +482,43 @@ public class UsuarioFragment extends Fragment {
         int contadorProviders = 0;
         int idProvider = PROVIDER_ANONIMO;
 
-        for (String user : FirebaseAuth.getInstance().getCurrentUser().getProviders()) {
-            Log.d("xx_xx_provider_info", user);
-            if (user.equals("facebook.com")) {
-                //For linked facebook account
-                Log.d("xx_xx_provider_info", "User is signed in with Facebook");
-                contadorProviders++;
-                idProvider = PROVIDER_FACEBOOK;
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getProviders() != null) {
+            for (String user : FirebaseAuth.getInstance().getCurrentUser().getProviders()) {
+                Log.d("xx_xx_provider_info", user);
+                if (user.equals("facebook.com")) {
+                    //For linked facebook account
+                    Log.d("xx_xx_provider_info", "User is signed in with Facebook");
+                    contadorProviders++;
+                    idProvider = PROVIDER_FACEBOOK;
 
-            } else if (user.equals("google.com")) {
-                //For linked Google account
-                Log.d("xx_xx_provider_info", "User is signed in with Google");
-                contadorProviders++;
-                idProvider = PROVIDER_GMAIL;
-            } else if (user.equals("twitter.com")) {
-                //For linked Google account
-                Log.d("xx_xx_provider_info", "User is signed in with Twitter");
-                contadorProviders++;
-                idProvider = PROVIDER_TWITTER;
-            } else if (user.equals("password")) {
-                //For linked Google account
-                Log.d("xx_xx_provider_info", "User is signed in with Password");
-                contadorProviders++;
-                idProvider = PROVIDER_PASSWORD;
-            } else if (user.equals("phone")) {
-                //For linked Google account
-                Log.d("xx_xx_provider_info", "User is signed in with Phone");
-                idProvider = PROVIDER_PHONE;
-                contadorProviders++;
-            } else {
-                Log.d("xx_xx_provider_info", "User is signed in with Else");
-                contadorProviders++;
+                } else if (user.equals("google.com")) {
+                    //For linked Google account
+                    Log.d("xx_xx_provider_info", "User is signed in with Google");
+                    contadorProviders++;
+                    idProvider = PROVIDER_GMAIL;
+                } else if (user.equals("twitter.com")) {
+                    //For linked Google account
+                    Log.d("xx_xx_provider_info", "User is signed in with Twitter");
+                    contadorProviders++;
+                    idProvider = PROVIDER_TWITTER;
+                } else if (user.equals("password")) {
+                    //For linked Google account
+                    Log.d("xx_xx_provider_info", "User is signed in with Password");
+                    contadorProviders++;
+                    idProvider = PROVIDER_PASSWORD;
+                } else if (user.equals("phone")) {
+                    //For linked Google account
+                    Log.d("xx_xx_provider_info", "User is signed in with Phone");
+                    idProvider = PROVIDER_PHONE;
+                    contadorProviders++;
+                } else {
+                    Log.d("xx_xx_provider_info", "User is signed in with Else");
+                    contadorProviders++;
+                }
             }
+            if (contadorProviders > 1)
+                idProvider = -1;
         }
-        if (contadorProviders > 1)
-            idProvider = -1;
         return idProvider;
     }
 }

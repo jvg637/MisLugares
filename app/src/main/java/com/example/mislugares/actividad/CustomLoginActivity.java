@@ -39,6 +39,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
@@ -63,6 +65,9 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build();;
+//        FirebaseFirestore.getInstance().setFirestoreSettings(settings);
+
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_custom_login);
         etCorreo = (EditText) findViewById(R.id.correo);

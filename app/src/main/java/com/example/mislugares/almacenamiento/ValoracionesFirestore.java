@@ -78,6 +78,7 @@ public class ValoracionesFirestore {
 
             @Override
             public void onError(Exception e) {
+
             }
         });
     }
@@ -153,5 +154,9 @@ public class ValoracionesFirestore {
         } else {   //El usuario cambia su valoración
             return (nValoraciones * media - viejaVal + nuevaVal) / nValoraciones;
         }
+    }
+
+    public static interface  EscuchadorErrorValoracion {
+        public void onError();
     }
 }

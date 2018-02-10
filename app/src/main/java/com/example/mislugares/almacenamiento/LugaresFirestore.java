@@ -60,8 +60,19 @@ public class LugaresFirestore implements LugaresAsinc {
         lugares.document(id).delete();
     }
 
-    public void actualiza(String id, Lugar lugar) {
-        lugares.document(id).set(lugar);
+    public void actualiza(String id, Lugar lugar, final EscuchadorActualiza actualiza) {
+        lugares.document(id).set(lugar).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.getException()!=null) {
+                    Log.d("LugaresFirestore", "Solo el si el creador es el mismo y esta la información en el creador se actualziara el sitio");
+                    actualiza.onRespuesta(false);
+                }
+                else {
+                    actualiza.onRespuesta(true);
+                }
+            }
+        });
     }
 
     public void tamanyo(final EscuchadorTamanyo escuchador) {

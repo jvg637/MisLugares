@@ -13,15 +13,15 @@ public class Lugar {
     private TipoLugar tipo;
     private long n_valoraciones;
 
-    public String getUsuario() {
-        return usuario;
+    public String getCreador() {
+        return creador;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setCreador(String creador) {
+        this.creador = creador;
     }
 
-    private String usuario;
+    private String creador;
 
 
     public Lugar(String nombre, String direccion, double longitud,

@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,8 +34,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.mislugares.almacenamiento.LugaresFirebase;
-import com.example.mislugares.almacenamiento.LugaresFirestore;
+import com.example.mislugares.actividad.VistaLugarActivity;
 import com.example.mislugares.almacenamiento.ValoracionesFirestore;
 import com.example.mislugares.utilidades.DialogoSelectorFecha;
 import com.example.mislugares.utilidades.DialogoSelectorHora;
@@ -164,24 +162,30 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             } else {
                 TextView direccion = (TextView) v.findViewById(R.id.direccion);
                 direccion.setText(lugar.getDireccion());
+                direccion.setVisibility(View.VISIBLE);
+                v.findViewById(R.id.barra_direccion).setVisibility(View.VISIBLE);
             }
             if (lugar.getTelefono() == 0) {
                 v.findViewById(R.id.barra_telefono).setVisibility(View.GONE);
             } else {
                 TextView telefono = (TextView) v.findViewById(R.id.telefono);
                 telefono.setText(Integer.toString(lugar.getTelefono()));
+                v.findViewById(R.id.barra_telefono).setVisibility(View.VISIBLE);
             }
             if (lugar.getUrl().isEmpty()) {
                 v.findViewById(R.id.barra_url).setVisibility(View.GONE);
             } else {
                 TextView url = (TextView) v.findViewById(R.id.url);
                 url.setText(lugar.getUrl());
+                url.setVisibility(View.VISIBLE);
+                v.findViewById(R.id.barra_url).setVisibility(View.VISIBLE);
             }
             if (lugar.getComentario().isEmpty()) {
                 v.findViewById(R.id.barra_comentario).setVisibility(View.GONE);
             } else {
                 TextView comentario = (TextView) v.findViewById(R.id.comentario);
                 comentario.setText(lugar.getComentario());
+                v.findViewById(R.id.barra_comentario).setVisibility(View.VISIBLE);
             }
             TextView fecha = (TextView) v.findViewById(R.id.fecha);
             fecha.setText(DateFormat.getDateInstance().format(
@@ -228,7 +232,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                     }
                 });
             } else {
-
+                valoracion.setEnabled(true);
                 final String _id = SelectorFragment.getAdaptador().getKey((int) id);
                 final String usuario = FirebaseAuth.getInstance().getUid();
                 ValoracionesFirestore.leerValoracion(_id, usuario, new ValoracionesFirestore.EscuchadorValoracion() {
@@ -248,12 +252,17 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 //                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
                                 primeraValoracion(false);
                                 ValoracionesFirestore.guardarValoracionYRecalcular(_id, usuario, valor);
+
                             }
                         });
                     }
 
                     @Override
                     public void onError(Exception e) {
+                        primeraValoracion(false);
+                        this.onRespuesta(0.0);
+                        valoracion.setEnabled(false);
+                        Toast.makeText(VistaLugarFragment.this.getContext(), "No se puede valorar un lugar que haya creado", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -322,7 +331,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 
     //    public void borrarLugar(final int id) {
     public void borrarLugar() {
-        if (lugar.getUsuario() != null && !lugar.getUsuario().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+        if (lugar.getCreador() != null && !lugar.getCreador().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
             mensaje("Sólo el creador del lugar puede realizar el borrado");
         else {
             new AlertDialog.Builder(getActivity())
@@ -541,7 +550,12 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
 //        String _id = SelectorFragment.adaptador.getRef((int) id).getKey();
         // FIREBASE FIRESTORE
         String _id = SelectorFragment.getAdaptador().getKey((int) id);
-        MainActivity.lugares.actualiza(_id, lugar);
+        MainActivity.lugares.actualiza(_id, lugar, new LugaresAsinc.EscuchadorActualiza() {
+            @Override
+            public void onRespuesta(boolean estado) {
+
+            }
+        });
     }
 
     public void cambiarHora() {

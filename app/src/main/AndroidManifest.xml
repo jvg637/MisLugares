@@ -67,7 +67,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".actividad.UsuarioActivity"
-            android:label="Información sobre el usuario" />
+            android:label="Información sobre el creador" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

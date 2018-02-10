@@ -16,6 +16,10 @@ public interface LugaresAsinc {
         void onRespuesta(float valoracion);
     }
 
+    interface EscuchadorActualiza{
+        void onRespuesta(boolean estado);
+    }
+
 
     interface EscuchadorElemento {
         void onRespuesta(Lugar lugar);
@@ -39,7 +43,7 @@ public interface LugaresAsinc {
 
     void borrar(String id);
 
-    void actualiza(String id, Lugar lugar);
+    void actualiza(String id, Lugar lugar, EscuchadorActualiza actualiza);
 
     void tamanyo(EscuchadorTamanyo escuchador);
 }

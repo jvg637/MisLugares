@@ -7,7 +7,9 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.example.mislugares.almacenamiento.LugaresAsinc;
 import com.example.mislugares.modelo.Lugar;
 import com.example.mislugares.R;
 import com.example.mislugares.modelo.TipoLugar;
@@ -92,16 +94,25 @@ public class EdicionLugarActivity extends AppCompatActivity {
 //                }
 //                MainActivity.lugares.actualiza((int) _id, lugar);
                 if (id == -1) {
-                    lugar.setUsuario(FirebaseAuth.getInstance().getUid());
+                    lugar.setCreador(FirebaseAuth.getInstance().getUid());
                 }
-                MainActivity.lugares.actualiza(_id, lugar);
+                MainActivity.lugares.actualiza(_id, lugar, new LugaresAsinc.EscuchadorActualiza() {
+                    @Override
+                    public void onRespuesta(boolean estado) {
+                        if (!estado) {
+                            Toast.makeText(EdicionLugarActivity.this, "Permisos insuficiones por las reglas", Toast.LENGTH_SHORT).show();
+                        } else {
+                            finish();
+                        }
+                    }
+                });
 //                SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //                if (id != -1) {
 //                    SelectorFragment.adaptador.notifyItemChanged((int) id);
 //                } else {
 //                    SelectorFragment.adaptador.notifyDataSetChanged();
 //                }
-                finish();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

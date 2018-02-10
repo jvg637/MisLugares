@@ -1,8 +1,11 @@
 package com.example.mislugares.almacenamiento;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.mislugares.modelo.Lugar;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,8 +75,19 @@ public class LugaresFirebase implements LugaresAsinc {
         nodo.child(id).setValue(null);
     }
 
-    public void actualiza(String id, Lugar lugar) {
-        nodo.child(id).setValue(lugar);
+    public void actualiza(String id, Lugar lugar, final EscuchadorActualiza actualiza) {
+        nodo.child(id).setValue(lugar).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    actualiza.onRespuesta(true);
+                } else {
+                    actualiza.onRespuesta(false);
+                }
+            }
+        });
+
+
     }
 
     public void tamanyo(final EscuchadorTamanyo escuchador) {

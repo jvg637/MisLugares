@@ -133,30 +133,40 @@ public class SelectorFragment extends Fragment {
 //            }
 //        });
 
-        if (pref.usarFirebaseUI()) {
-            if (pref.usarFirestore()) {
-//                com.google.firebase.firestore.Query queryFirestore = getQueryFireStore(pref);
-                FirestoreRecyclerOptions<Lugar> opcionesFirestore = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(getQueryFireStore(pref), Lugar.class).build();
-
-                adaptador = new AdaptadorLugaresFirestoreUI(opcionesFirestore);
-            } else {
-                Query query = getQueryDatabase(pref);
-
-
-                FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().
-                        setQuery(query, Lugar.class).
-                        build();
-                adaptador = new AdaptadorLugaresFirebaseUI(opciones, FirebaseDatabase.getInstance().getReference().child("valoraciones"));
+        if (pref.usarFirestore()) {
+            com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
+            switch (pref.criterioSeleccion()) {
+                case SELECCION_MIOS:
+                    query = query.whereEqualTo("creador", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    break;
+                case SELECCION_TIPO:
+                    query = query.whereEqualTo("tipo", pref.tipoSeleccion());
+                    break;
             }
-
-        } else
-
-        {
-            if (pref.usarFirestore()) {
-//                com.google.firebase.firestore.Query queryFirestore = getQueryFireStore(pref);
-                adaptador = new AdaptadorLugaresFirestore(getContext(), getQueryFireStore(pref));
+            if (pref.usarFirebaseUI()) {
+                FirestoreRecyclerOptions<Lugar> options = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+                adaptador = new AdaptadorLugaresFirestoreUI(options);
             } else {
-                adaptador = new AdaptadorLugaresFirebase(getActivity(), getQueryDatabase(pref), FirebaseDatabase.getInstance().getReference().child("valoraciones"));
+                adaptador = new AdaptadorLugaresFirestore(getContext(), query);
+            }
+        } else {
+            if (pref.usarFirebaseUI()) {
+                com.google.firebase.database.Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(pref.maximoMostrar());
+                switch (pref.criterioSeleccion()) {
+                    case SELECCION_MIOS:
+                        query = query.orderByChild("creador").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        break;
+                    case SELECCION_TIPO:
+                        query = query.orderByChild("tipo").equalTo(pref.tipoSeleccion());
+                        break;
+                    default:
+                        query = query.orderByChild(pref.criterioOrdenacion());
+                        break;
+                }
+                FirebaseRecyclerOptions<Lugar> options = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+                adaptador = new AdaptadorLugaresFirebaseUI(options, FirebaseDatabase.getInstance().getReference("valoraciones"));
+            } else {
+                adaptador = new AdaptadorLugaresFirebase((MainActivity) getActivity(), FirebaseDatabase.getInstance().getReference("lugares"), FirebaseDatabase.getInstance().getReference("valoraciones"));
             }
         }
 
