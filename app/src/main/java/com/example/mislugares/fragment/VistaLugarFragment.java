@@ -35,6 +35,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.mislugares.actividad.VistaLugarActivity;
+import com.example.mislugares.almacenamiento.ValoracionesAsinc;
+import com.example.mislugares.almacenamiento.ValoracionesFirebase;
 import com.example.mislugares.almacenamiento.ValoracionesFirestore;
 import com.example.mislugares.utilidades.DialogoSelectorFecha;
 import com.example.mislugares.utilidades.DialogoSelectorHora;
@@ -200,42 +202,14 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             Preferencias pref = Preferencias.getInstance();
             pref.inicializa(getContext());
 
+
+            valoracion.setEnabled(true);
+            final String _id = SelectorFragment.getAdaptador().getKey((int) id);
+            final String usuario = FirebaseAuth.getInstance().getUid();
+
             if (!pref.usarFirestore()) {
+                MainActivity.valoraciones.leerValoracion(_id, usuario, new ValoracionesFirebase.EscuchadorValoracion() {
 
-
-                MainActivity.lugares.getValoracionUsuario(SelectorFragment.getAdaptador().getKey((int) id), FirebaseAuth.getInstance().getCurrentUser().getUid(), new LugaresAsinc.EscuchadorValoracionUsuario() {
-                    @Override
-                    public void onRespuesta(float valoracionUsuario) {
-                        if (valoracionUsuario != -1) {
-                            valoracion.setRating(valoracionUsuario);
-                            primeraValoracion(false);
-                        } else {
-                            valoracion.setRating(0);
-                            primeraValoracion(true);
-                        }
-
-                        //            valoracion.setRating(lugar.getValoracion());
-                        valoracion.setOnRatingBarChangeListener(
-                                new RatingBar.OnRatingBarChangeListener() {
-                                    @Override
-                                    public void onRatingChanged(RatingBar ratingBar,
-                                                                float valor, boolean fromUser) {
-//                            lugar.setValoracion(valor);
-                                        primeraValoracion(false);
-                                        String _id = SelectorFragment.getAdaptador().getKey((int) id);
-                                        String usuario = FirebaseAuth.getInstance().getUid();
-                                        // FIREBASE DB
-                                        Usuario.guardarValoracionUsuario(usuario, _id, valor);
-//                            actualizaLugar();
-                                    }
-                                });
-                    }
-                });
-            } else {
-                valoracion.setEnabled(true);
-                final String _id = SelectorFragment.getAdaptador().getKey((int) id);
-                final String usuario = FirebaseAuth.getInstance().getUid();
-                ValoracionesFirestore.leerValoracion(_id, usuario, new ValoracionesFirestore.EscuchadorValoracion() {
                     @Override
                     public void onNoExiste() {
                         this.onRespuesta(0.0);
@@ -251,7 +225,39 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                             public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
 //                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
                                 primeraValoracion(false);
-                                ValoracionesFirestore.guardarValoracionYRecalcular(_id, usuario, valor);
+                                MainActivity.valoraciones.guardarValoracionYRecalcular(_id, usuario, valor);
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        primeraValoracion(false);
+                        this.onRespuesta(0.0);
+                        valoracion.setEnabled(false);
+                        Toast.makeText(VistaLugarFragment.this.getContext(), "No se puede valorar un lugar que haya creado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+
+                MainActivity.valoraciones.leerValoracion(_id, usuario, new ValoracionesAsinc.EscuchadorValoracion() {
+                    @Override
+                    public void onNoExiste() {
+                        this.onRespuesta(0.0);
+                        primeraValoracion(true);
+                    }
+
+                    @Override
+                    public void onRespuesta(Double valor) {
+                        valoracion.setOnRatingBarChangeListener(null);
+                        valoracion.setRating(valor.floatValue());
+                        valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                            @Override
+                            public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
+//                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
+                                primeraValoracion(false);
+                                MainActivity.valoraciones.guardarValoracionYRecalcular(_id, usuario, valor);
 
                             }
                         });

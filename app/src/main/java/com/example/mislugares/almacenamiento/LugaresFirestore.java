@@ -38,15 +38,6 @@ public class LugaresFirestore implements LugaresAsinc {
         });
     }
 
-    @Override
-    public void getValoracionUsuario(String lugar, String uid, EscuchadorValoracionUsuario escuchador) {
-
-    }
-
-    @Override
-    public void getValoracionMedia(String idLugar, Lugar lugar, EscuchadorValorcionMedia escuchador) {
-
-    }
 
     public void anyade(Lugar lugar) {
         lugares.add(lugar); // lugares.document().set(lugar);

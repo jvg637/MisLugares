@@ -17,15 +17,15 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class LugaresFirebase implements LugaresAsinc {
-    private final static String NODO_LUGARES = "lugares";
-    private final static String NODO_VALORACIONES = "valoraciones";
+    public final static String NODO_LUGARES = "lugares";
+//    private final static String NODO_VALORACIONES = "valoraciones";
     private DatabaseReference nodo;
-    private DatabaseReference nodoValoraciones;
+//    private DatabaseReference nodoValoraciones;
 
     public LugaresFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         nodo = database.getReference().child(NODO_LUGARES);
-        nodoValoraciones = database.getReference().child(NODO_VALORACIONES);
+//        nodoValoraciones = database.getReference().child(NODO_VALORACIONES);
     }
 
     public void elemento(String id, final EscuchadorElemento escuchador) {
@@ -44,24 +44,24 @@ public class LugaresFirebase implements LugaresAsinc {
         });
     }
 
-    @Override
-    public void getValoracionUsuario(final String lugar, String uid, final EscuchadorValoracionUsuario escuchador) {
-        nodoValoraciones.child(lugar).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getValue()!=null)
-                    escuchador.onRespuesta(dataSnapshot.getValue(Float.class));
-                else
-                    escuchador.onRespuesta(-1);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("Firebase", "Error al leer.", error.toException());
-                escuchador.onRespuesta(-1);
-            }
-        });
-    }
+//    @Override
+//    public void getValoracionUsuario(final String lugar, String uid, final EscuchadorValoracionUsuario escuchador) {
+//        nodoValoraciones.child(lugar).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists() && dataSnapshot.getValue()!=null)
+//                    escuchador.onRespuesta(dataSnapshot.getValue(Float.class));
+//                else
+//                    escuchador.onRespuesta(-1);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                Log.e("Firebase", "Error al leer.", error.toException());
+//                escuchador.onRespuesta(-1);
+//            }
+//        });
+//    }
 
     public void anyade(Lugar lugar) {
         nodo.push().setValue(lugar);
@@ -106,39 +106,4 @@ public class LugaresFirebase implements LugaresAsinc {
         });
     }
 
-    @Override
-    public void getValoracionMedia(final String idLugar, Lugar lugar, final EscuchadorValorcionMedia escuchador){
-        if (idLugar!= null) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            database.getReference("valoraciones/" + idLugar).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    long childrenCount = dataSnapshot.getChildrenCount();
-                    float media = 0;
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        media += (float) snapshot.getValue(Float.class);
-                    }
-
-                    if (childrenCount > 0)
-                        media /= childrenCount;
-                    else
-                        media = 0;
-
-//                if (lugar.getValoracion() != media) {
-//                    lugar.setValoracion(media);
-
-//                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                    +                    database.getReference("lugares").child(idLugar).setValue(lugar);
-//                }
-                    escuchador.onRespuesta(media);
-                    Log.d("<MEDIA>", idLugar + ":" + media);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
 }

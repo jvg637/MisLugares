@@ -7,14 +7,6 @@ import com.example.mislugares.modelo.Lugar;
  */
 
 public interface LugaresAsinc {
-    void getValoracionUsuario(String lugar, String uid, EscuchadorValoracionUsuario escuchador );
-
-    void getValoracionMedia(String idLugar, Lugar lugar, EscuchadorValorcionMedia escuchador);
-
-
-    interface EscuchadorValoracionUsuario{
-        void onRespuesta(float valoracion);
-    }
 
     interface EscuchadorActualiza{
         void onRespuesta(boolean estado);

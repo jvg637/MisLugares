@@ -27,12 +27,10 @@ public class AdaptadorLugaresFirebaseUI extends FirebaseRecyclerAdapter<Lugar, A
 
     private DatabaseReference referenceValoraciones;
     protected View.OnClickListener onClickListener;
-    private Map<String, Float> valoracionesMedias;
 
     public AdaptadorLugaresFirebaseUI(@NonNull FirebaseRecyclerOptions<Lugar> opciones, DatabaseReference valoraciones) {
         super(opciones);
         referenceValoraciones = valoraciones;
-        valoracionesMedias = new HashMap<>();
 
     }
 
@@ -44,13 +42,6 @@ public class AdaptadorLugaresFirebaseUI extends FirebaseRecyclerAdapter<Lugar, A
 
     @Override
     protected void onBindViewHolder(@NonNull AdaptadorLugares.ViewHolder holder, int position, @NonNull Lugar lugar) {
-        Float valoracion = valoracionesMedias.get(getKey(position));
-        if (valoracion != null) {
-            lugar.setValoracion(valoracion);
-
-        } else {
-            lugar.setValoracion(0);
-        }
         AdaptadorLugares.personalizaVista(holder, lugar);
         holder.itemView.setOnClickListener(onClickListener);
     }
@@ -64,87 +55,6 @@ public class AdaptadorLugaresFirebaseUI extends FirebaseRecyclerAdapter<Lugar, A
         return super.getSnapshots().getSnapshot(pos).getKey();
     }
 
-    public ChildEventListener valoracionesListener =
-            new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    getCalificacionMedia(dataSnapshot);
-                }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    getCalificacionMedia(dataSnapshot);
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    getCalificacionMedia(dataSnapshot);
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    getCalificacionMedia(dataSnapshot);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-
-
-    @Override
-    public void startListening() {
-        super.startListening();
-        valoracionesMedias = new HashMap<>();
-        referenceValoraciones.addChildEventListener(valoracionesListener);
-    }
-
-    @Override
-    public void stopListening() {
-        referenceValoraciones.removeEventListener(valoracionesListener);
-        super.stopListening();
-
-    }
-
-
-    private void getCalificacionMedia(DataSnapshot dataSnapshot) {
-        final String key = dataSnapshot.getKey();
-        int pos = getIndexOfKey(key);
-        if (pos>=0 && pos < getItemCount()) {
-            final Lugar lugar = getItem(getIndexOfKey(key));
-
-            if (lugar != null) {
-                if (dataSnapshot.exists()) {
-                    MainActivity.lugares.getValoracionMedia(dataSnapshot.getKey(), lugar, new LugaresAsinc.EscuchadorValorcionMedia() {
-                        @Override
-                        public void onRespuesta(float valoracion) {
-
-
-                            int index = getIndexOfKey(key);
-                            if (index >= 0) {
-                                if (valoracionesMedias.containsKey(key)) {
-                                    valoracionesMedias.remove(key);
-                                }
-                                valoracionesMedias.put(key, valoracion);
-                                notifyItemChanged(index);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    public int getIndexOfKey(String key) {
-        for (int i = 0; i < getItemCount(); i++) {
-
-            if (getRef(i).getKey().equals(key)) {
-                return i;
-            }
-        }
-        return -1;
-
-    }
 
 }

@@ -59,9 +59,5 @@ public class Usuario {
         db.collection("usuarios").document(user.getUid()).set(usuario);
     }
 
-    public static void guardarValoracionUsuario(final String user, final String idLugar, final float valoracion) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("valoraciones/" + idLugar + "/" + user).setValue(valoracion);
 
-    }
 }

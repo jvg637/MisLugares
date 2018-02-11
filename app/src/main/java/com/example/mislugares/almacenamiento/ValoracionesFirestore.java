@@ -20,14 +20,9 @@ import java.util.Map;
  * Created by jvg63 on 05/02/2018.
  */
 
-public class ValoracionesFirestore {
-    public interface EscuchadorValoracion {
-        void onRespuesta(Double valor);
+public class ValoracionesFirestore implements ValoracionesAsinc {
 
-        void onNoExiste();
 
-        void onError(Exception e);
-    }
 
     //    public static void guardarValoracion(String lugar, String usuario, Double valor) {
 //        FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -35,7 +30,7 @@ public class ValoracionesFirestore {
 //        datos.put("valoracion", valor);
 //        db.collection("lugares").document(lugar).collection("valoraciones").document(usuario).set(datos);
 //    }
-    public static void guardarValoracion(Transaction transaction, FirebaseFirestore db, String lugar, String usuario, Double valor) throws FirebaseFirestoreException {
+    public  void guardarValoracion(Transaction transaction, FirebaseFirestore db, String lugar, String usuario, Double valor) throws FirebaseFirestoreException {
         Map<String, Object> datos = new HashMap<>();
         datos.put("valoracion", valor);
 
@@ -44,7 +39,9 @@ public class ValoracionesFirestore {
         transaction.set(ref, datos);
     }
 
-    public static void leerValoracion(String lugar, String usuario, final EscuchadorValoracion escuchador) {
+
+
+    public  void leerValoracion(String lugar, String usuario, final EscuchadorValoracion escuchador) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("lugares").document(lugar).collection("valoraciones").document(usuario).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -64,7 +61,7 @@ public class ValoracionesFirestore {
         });
     }
 
-    public static void guardarValoracionYRecalcular(final String lugar, final String usuario, final float nuevaVal) {
+    public  void guardarValoracionYRecalcular(final String lugar, final String usuario, final float nuevaVal) {
         leerValoracion(lugar, usuario, new EscuchadorValoracion() {
             @Override
             public void onRespuesta(Double viejaVal) {
@@ -82,6 +79,9 @@ public class ValoracionesFirestore {
             }
         });
     }
+
+
+
 
 //    private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
 //        FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -105,7 +105,7 @@ public class ValoracionesFirestore {
 //        });
 //    }
 
-    private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
+    private  void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final DocumentReference ref = db.collection("lugares").document(lugar);
         db.runTransaction(new Transaction.Function<Double>() {
@@ -122,10 +122,10 @@ public class ValoracionesFirestore {
                     nValoraciones = 0l;
                 double nuevaMedia = nuevaMedia(media, nValoraciones, viejaVal, nuevaVal);
                 if (Double.isNaN(viejaVal)) nValoraciones++;
-                Map<String, Object> map = snapshot.getData();
-                map.put("valoracion", nuevaMedia);
-                map.put("n_valoraciones", nValoraciones);
-                transaction.update(ref, map);
+//                Map<String, Object> map = snapshot.getData();
+//                map.put("valoracion", nuevaMedia);
+//                map.put("n_valoraciones", nValoraciones);
+                transaction.update(ref, "valoracion", nuevaMedia,"n_valoraciones", nValoraciones);
                 guardarValoracion(transaction, db, lugar, usuario, nuevaVal);
 
                 return nuevaMedia;
@@ -145,7 +145,7 @@ public class ValoracionesFirestore {
     }
 
 
-    private static Double nuevaMedia(double media, long nValoraciones, double viejaVal, double nuevaVal) {
+    private  Double nuevaMedia(double media, long nValoraciones, double viejaVal, double nuevaVal) {
         if (nValoraciones == 0) { //No existe ninguna valoración
 
             return nuevaVal;
@@ -156,7 +156,4 @@ public class ValoracionesFirestore {
         }
     }
 
-    public static interface  EscuchadorErrorValoracion {
-        public void onError();
-    }
 }

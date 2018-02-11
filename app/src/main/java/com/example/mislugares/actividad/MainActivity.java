@@ -26,6 +26,9 @@ import com.example.mislugares.almacenamiento.Lugares;
 import com.example.mislugares.almacenamiento.LugaresAsinc;
 import com.example.mislugares.almacenamiento.LugaresFirebase;
 import com.example.mislugares.almacenamiento.LugaresFirestore;
+import com.example.mislugares.almacenamiento.ValoracionesAsinc;
+import com.example.mislugares.almacenamiento.ValoracionesFirebase;
+import com.example.mislugares.almacenamiento.ValoracionesFirestore;
 import com.example.mislugares.utilidades.PermisosUtilidades;
 import com.example.mislugares.utilidades.Preferencias;
 import com.example.mislugares.R;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     //    public static LugaresBD lugares;
     public static LugaresAsinc lugares;
+    public static ValoracionesAsinc valoraciones;
     private LocationManager manejador;
     private Location mejorLocaliz;
     private static final int SOLICITUD_PERMISO_LOCALIZACION = 0;
@@ -159,8 +163,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         if (pref.usarFirestore() ){
             lugares = new LugaresFirestore();
+            valoraciones = new ValoracionesFirestore();
         } else {
             lugares = new LugaresFirebase();
+            valoraciones = new ValoracionesFirebase();
         }
     }
 

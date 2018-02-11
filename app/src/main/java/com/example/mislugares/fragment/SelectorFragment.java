@@ -3,6 +3,7 @@ package com.example.mislugares.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,9 +56,13 @@ public class SelectorFragment extends Fragment {
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
         RecyclerView.LayoutManager layoutManager =
-                new LinearLayoutManager(getContext());
-        layoutManager.setAutoMeasureEnabled(true);
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+//        layoutManager.setAutoMeasureEnabled(  true);
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         ponerAdaptador();
 
     }
