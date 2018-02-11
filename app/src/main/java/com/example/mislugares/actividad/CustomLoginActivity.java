@@ -2,7 +2,9 @@ package com.example.mislugares.actividad;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -23,6 +25,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -37,6 +40,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,7 +58,7 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import static com.example.mislugares.modelo.Usuario.guardarUsuario;
 
 public class CustomLoginActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseAuth auth;
     private String correo = "";
     private String contraseña = "";
     private ViewGroup contenedor;
@@ -65,10 +69,11 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        auth = FirebaseAuth.getInstance();
 //        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build();;
 //        FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
-        FacebookSdk.sdkInitialize(this);
+//        FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_custom_login);
         etCorreo = (EditText) findViewById(R.id.correo);
         etContraseña = (EditText) findViewById(R.id.contraseña);
@@ -98,12 +103,13 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
             @Override
             public void onCancel() {
                 mensaje("Cancelada autentificación con facebook");
-                dialogo.dismiss();
+                errorLogin();
             }
 
 
             @Override
             public void onError(FacebookException error) {
+                errorLogin();
                 mensaje(error.getLocalizedMessage());
             }
         });
@@ -127,12 +133,15 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
             @Override
             public void failure(TwitterException exception) {
+                errorLogin();
                 mensaje(exception.getLocalizedMessage());
             }
         });
 
         btnTwitter.setEnabled(true);
         unificar = getIntent().getBooleanExtra("unificar", false);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferencias, false);
 
         muestraOcultaAnonima();
         verificaSiUsuarioValidado();
@@ -150,12 +159,12 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
     }
 
     private void verificaSiUsuarioValidado() {
-        if (!unificar && auth.getCurrentUser() != null) {
+        if (!unificar && FirebaseAuth.getInstance().getCurrentUser() != null) {
             guardarUsuario(auth.getCurrentUser());
             Intent i = new Intent(this, MainActivity.class);
             UsuarioFragment.passwordEmail = contraseña;
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            if (dialogo!=null)
+            if (dialogo != null)
                 dialogo.dismiss();
             startActivity(i);
             finish();
@@ -172,7 +181,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                     if (task.isSuccessful()) {
                         verificaSiUsuarioValidado();
                     } else {
-                        dialogo.dismiss();
+                        errorLogin();
                         mensaje(task.getException().getLocalizedMessage());
                     }
                 }
@@ -194,7 +203,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                         if (task.isSuccessful()) {
                             verificaSiUsuarioValidado();
                         } else {
-                            dialogo.dismiss();
+                            errorLogin();
                             mensaje(task.getException().getLocalizedMessage());
                         }
                     }
@@ -253,11 +262,11 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 if (result.isSuccess()) {
                     googleAuth(result.getSignInAccount());
                 } else {
-                    dialogo.dismiss();
+                    errorLogin();
                     mensaje("Error de autentificación con Google");
                 }
             } else {
-                dialogo.dismiss();
+                errorLogin();
             }
         } else if (requestCode == btnFacebook.getRequestCode()) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -275,7 +284,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        dialogo.dismiss();
+                        errorLogin();
                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                             LoginManager.getInstance().logOut();
                         }
@@ -302,7 +311,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        dialogo.dismiss();
+                        errorLogin();
                         mensaje(task.getException().getLocalizedMessage());
                     } else {
                         verificaSiUsuarioValidado();
@@ -324,12 +333,23 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 } else {
                     Log.w("MisLugares", "Error en linkWithCredential", task.getException());
                     mensaje("Error al unificar cuentas.");
-                    unificar = false;
-                    dialogo.dismiss();
+                    errorLogin();
                     muestraOcultaAnonima();
                 }
             }
         });
+    }
+
+    private void errorLogin() {
+        unificar = false;
+        if (dialogo != null)
+            dialogo.dismiss();
+        if (auth.getCurrentUser() != null)
+            AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                }
+            });
     }
 
     @Override
@@ -353,6 +373,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
                         mensaje(task.getException().getLocalizedMessage());
+                        errorLogin();
                     } else {
                         verificaSiUsuarioValidado();
                     }
@@ -370,7 +391,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 if (task.isSuccessful()) {
                     verificaSiUsuarioValidado();
                 } else {
-                    dialogo.dismiss();
+                    errorLogin();
                     Log.w("MisLugares", "Error en signInAnonymously", task.getException());
                     mensaje("ERROR al intentarentrar de forma anónima");
                 }
@@ -392,7 +413,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
             auth.sendPasswordResetEmail(correo).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    dialogo.dismiss();
+                    errorLogin();
                     if (task.isSuccessful()) {
                         mensaje("Verifica tu correo para cambiar contraseña.");
                     } else {
