@@ -26,9 +26,11 @@ import com.example.mislugares.almacenamiento.Lugares;
 import com.example.mislugares.almacenamiento.LugaresAsinc;
 import com.example.mislugares.almacenamiento.LugaresFirebase;
 import com.example.mislugares.almacenamiento.LugaresFirestore;
+import com.example.mislugares.almacenamiento.LugaresVector;
 import com.example.mislugares.almacenamiento.ValoracionesAsinc;
 import com.example.mislugares.almacenamiento.ValoracionesFirebase;
 import com.example.mislugares.almacenamiento.ValoracionesFirestore;
+import com.example.mislugares.modelo.Lugar;
 import com.example.mislugares.utilidades.PermisosUtilidades;
 import com.example.mislugares.utilidades.Preferencias;
 import com.example.mislugares.R;
@@ -101,60 +103,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //            }
 //        });
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-//
+
 //        FirebaseFirestore db = FirebaseFirestore.getInstance();
 //        for (Lugar lugar : LugaresVector.ejemploLugaresConFoto()) {
 //            db.collection("lugares").add(lugar);
 //        }
 
 
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Map<String, Object> user = new HashMap<>();
-//        user.put("first", "Ada");
-//        user.put("last", "Lovelace");
-//        user.put("born", 1815);
-
-// Add a new document with a generated ID
-//        db.collection("users")
-//                .add(user)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        Log.d("TRAZA", "DocumentSnapshot added with ID: " + documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w("TRAZA", "Error adding document", e);
-//                    }
-//                });
-
-        // Create a new user with a first, middle, and last name
-//        Map<String, Object> user = new HashMap<>();
-//        user.put("first", "Alan");
-//        user.put("middle", "Mathison");
-//        user.put("last", "Turring");
-//        user.put("born", 1912);
-//
-//// Add a new document with a generated ID
-//        db.collection("users")
-//                .add(user);
-
-//        db.collection("users")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (DocumentSnapshot document : task.getResult()) {
-//                                Log.d("TRAZA", document.getId() + " => " + document.getData());
-//                            }
-//                        } else {
-//                            Log.w("TRAZA", "Error getting documents.", task.getException());
-//                        }
-//                    }
-//                });
     }
 
     private void inicializaDB() {

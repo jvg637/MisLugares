@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.mislugares.R;
+import com.example.mislugares.almacenamiento.LugaresAsinc;
+import com.facebook.login.Login;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         login();
 
 
-        getHash();
+//        getHash();
     }
 
     private void getHash() {
@@ -63,10 +65,20 @@ public class LoginActivity extends AppCompatActivity {
 
 
             if (providerCorreoVerificadoOOtroAcceso(usuario)) {
-                guardarUsuario(usuario);
-                Intent i = new Intent(this, MainActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
+                guardarUsuario(usuario, new LugaresAsinc.EscuchadorActualiza() {
+                    @Override
+                    public void onRespuesta(boolean estado) {
+                        if (estado) {
+                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(LoginActivity.this   , "Error grabando Usuario en BBDD", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                });
+
             } else {
 
                 AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -122,8 +134,13 @@ public class LoginActivity extends AppCompatActivity {
             if (usuario.isEmailVerified()) {
                 return true;
             } else {
-                usuario.sendEmailVerification();
-                Toast.makeText(this, "Usuario no ha sidido verificado", Toast.LENGTH_SHORT).show();
+                usuario.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(LoginActivity.this, "Usuario no ha sidido verificado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 return false;
             }
         } else return true;

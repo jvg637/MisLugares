@@ -41,10 +41,12 @@
         android:title="Máximo de lugares a mostrar" />
     <CheckBoxPreference
         android:key="firestore"
+        android:defaultValue="false"
         android:summary="Usar Cloud Firestore en lugar de Realtime Database"
         android:title="Usar Firestore" />
     <CheckBoxPreference
         android:key="firebaseUI"
         android:summary="Utilizar FirebaseUI en lugar de directamente el SDK"
+        android:defaultValue="false"
         android:title="Usar FirebaseUI" />
 </PreferenceScreen>

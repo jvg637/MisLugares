@@ -57,7 +57,8 @@ public class SelectorFragment extends Fragment {
         super.onActivityCreated(state);
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-//        layoutManager.setAutoMeasureEnabled(  true);
+        layoutManager.setAutoMeasureEnabled(false);
+//                layoutManager.setAutoMeasureEnabled(  true);
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(itemDecoration);
@@ -71,75 +72,16 @@ public class SelectorFragment extends Fragment {
 
         Preferencias pref = Preferencias.getInstance();
         pref.inicializa(getContext());
-//        RecyclerView.LayoutManager layoutManager = layoutManager.setAutoMeasureEnabled(true);
         //Quitar si da problemas
-//        adaptador = new AdaptadorLugaresBD(getContext(),
-//                MainActivity.lugares, MainActivity.lugares.extraeCursor());
-//        adaptador.setOnItemClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((MainActivity) getActivity()).muestraLugar(
-//                        recyclerView.getChildAdapterPosition(v));
-//                /*Intent i = new Intent(getContext(), VistaLugarActivity.class);
-//                i.putExtra("id", (long)
-//                        recyclerView.getChildAdapterPosition(v));
-//                startActivity(i);*/
-//            }
-//        });
-//        recyclerView.setAdapter(adaptador);
 
-        // FIREBASE UI DATABASE
-//        Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(pref.maximoMostrar());
-//        switch (pref.criterioSeleccion()) {
-//            case SELECCION_MIOS:
-//                query = query.orderByChild("creador").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
-//                break;
-//            case SELECCION_TIPO:
-//                query = query.orderByChild("tipo").equalTo(pref.tipoSeleccion());
-//                break;
-//            default:
-//                query = query.orderByChild(pref.criterioOrdenacion());
-//                break;
-//        }
-//        FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
-//        adaptador = new AdaptadorLugaresFirebaseUI(opciones, FirebaseDatabase.getInstance().getReference().child("valoraciones"));
-
-        // FIREBASE DATABASE
-//        adaptador = new AdaptadorLugaresFirebase(getActivity(), query, FirebaseDatabase.getInstance().getReference().child("valoraciones"));
-
-        // FIREBASE FIRESTORE UI
-//            com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares")
-//                    .orderBy(pref.criterioOrdenacion(), com.google.firebase.firestore.Query.Direction.DESCENDING).limit(pref.maximoMostrar());
-//
-//
-//            switch (pref.criterioSeleccion()) {
-//                case SELECCION_MIOS:
-//                    query = query.whereEqualTo("creador", FirebaseAuth.getInstance().getCurrentUser().getUid());
-//                    break;
-//                case SELECCION_TIPO:
-//                    query = query.whereEqualTo("tipo", pref.tipoSeleccion());
-//                    break;
-//            }
-//            FirestoreRecyclerOptions<Lugar> opciones = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
-//
-//            adaptador = new AdaptadorLugaresFirestoreUI(opciones);
-        // FIREBASE FIRESTORE
-//        com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar();
-//        adaptador = new AdaptadorLugaresFirestore(getActivity(), query);
-//        getAdaptador().setOnItemClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((MainActivity) getActivity()).muestraLugar(
-//                        recyclerView.getChildAdapterPosition(v));
-//                //Intent i = new Intent(getContext(), VistaLugarActivity.class);
-//                //i.putExtra("id", (long)
-//                //        recyclerView.getChildAdapterPosition(v));
-//                //startActivity(i);
-//            }
-//        });
+        if (getAdaptador()!=null)
+            getAdaptador().stopListening();
 
         if (pref.usarFirestore()) {
-            com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
+            com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").limit(pref.maximoMostrar());
+            if (!pref.tipoSeleccion().equals("tipo")) {
+                query = query.orderBy(pref.criterioOrdenacion());
+            }
             switch (pref.criterioSeleccion()) {
                 case SELECCION_MIOS:
                     query = query.whereEqualTo("creador", FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -187,39 +129,6 @@ public class SelectorFragment extends Fragment {
 
     }
 
-    private Query getQueryDatabase(Preferencias pref) {
-        // FIREBASE UI DATABASE
-        Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(pref.maximoMostrar());
-        switch (pref.criterioSeleccion()) {
-            case SELECCION_MIOS:
-                query = query.orderByChild("creador").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                break;
-            case SELECCION_TIPO:
-                query = query.orderByChild("tipo").equalTo(pref.tipoSeleccion());
-                break;
-            default:
-                query = query.orderByChild(pref.criterioOrdenacion());
-                break;
-        }
-
-        return query;
-    }
-
-    @NonNull
-    private com.google.firebase.firestore.Query getQueryFireStore(Preferencias pref) {
-        com.google.firebase.firestore.Query queryFirestore = FirebaseFirestore.getInstance().collection("lugares")
-                .orderBy(pref.criterioOrdenacion(), com.google.firebase.firestore.Query.Direction.DESCENDING).limit(pref.maximoMostrar());
-
-        switch (pref.criterioSeleccion()) {
-            case SELECCION_MIOS:
-                queryFirestore = queryFirestore.whereEqualTo("creador", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                break;
-            case SELECCION_TIPO:
-                queryFirestore = queryFirestore.whereEqualTo("tipo", pref.tipoSeleccion());
-                break;
-        }
-        return queryFirestore;
-    }
 
 //    @Override
 //    public void onStart() {

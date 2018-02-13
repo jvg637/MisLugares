@@ -1,5 +1,10 @@
 package com.example.mislugares.modelo;
 
+import android.support.annotation.NonNull;
+
+import com.example.mislugares.almacenamiento.LugaresAsinc;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,13 +55,31 @@ public class Usuario {
         this(nombre, correo, System.currentTimeMillis());
     }
 
-    public static void guardarUsuario(final FirebaseUser user) {
-        Usuario usuario = new Usuario(user.getDisplayName(), user.getEmail());
+    public static void guardarUsuario(final FirebaseUser user, final LugaresAsinc.EscuchadorActualiza escuchadorActualiza) {
+        final Usuario usuario = new Usuario(user.getDisplayName(), user.getEmail());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("usuarios/" + user.getUid()).setValue(usuario);
+        database.getReference("usuarios/" + user.getUid()).setValue(usuario).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful() && task.getException() == null) {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("usuarios").document(user.getUid()).set(usuario).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful() && task.getException() == null)
+                                escuchadorActualiza.onRespuesta(true);
+                            else {
+                                escuchadorActualiza.onRespuesta(false);
+                            }
+                        }
+                    });
+                } else {
+                    escuchadorActualiza.onRespuesta(false);
+                }
+            }
+        });
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("usuarios").document(user.getUid()).set(usuario);
+
     }
 
 

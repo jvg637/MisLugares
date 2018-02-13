@@ -2,6 +2,7 @@ package com.example.mislugares.actividad;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -83,36 +84,40 @@ public class EdicionLugarActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.accion_guardar:
-                lugar.setNombre(nombre.getText().toString());
-                lugar.setTipo(TipoLugar.values()[tipo.getSelectedItemPosition()]);
-                lugar.setDireccion(direccion.getText().toString());
-                lugar.setTelefono(Integer.parseInt(telefono.getText().toString()));
-                lugar.setUrl(url.getText().toString());
-                lugar.setComentario(comentario.getText().toString());
+                try {
+                    lugar.setNombre(nombre.getText().toString());
+                    lugar.setTipo(TipoLugar.values()[tipo.getSelectedItemPosition()]);
+                    lugar.setDireccion(direccion.getText().toString());
+                    lugar.setTelefono(Integer.parseInt(telefono.getText().toString()));
+                    lugar.setUrl(url.getText().toString());
+                    lugar.setComentario(comentario.getText().toString());
 //                if (_id == -1) {
 //                    _id = SelectorFragment.adaptador.idPosicion((int) id);
 //                }
 //                MainActivity.lugares.actualiza((int) _id, lugar);
-                if (id == -1) {
-                    lugar.setCreador(FirebaseAuth.getInstance().getUid());
-                }
-                MainActivity.lugares.actualiza(_id, lugar, new LugaresAsinc.EscuchadorActualiza() {
-                    @Override
-                    public void onRespuesta(boolean estado) {
-                        if (!estado) {
-                            Toast.makeText(EdicionLugarActivity.this, "Permisos insuficiones por las reglas", Toast.LENGTH_SHORT).show();
-                        } else {
-                            finish();
-                        }
+                    if (id == -1) {
+                        lugar.setCreador(FirebaseAuth.getInstance().getUid());
                     }
-                });
+                    MainActivity.lugares.actualiza(_id, lugar, new LugaresAsinc.EscuchadorActualiza() {
+                        @Override
+                        public void onRespuesta(boolean estado) {
+                            if (!estado) {
+                                Toast.makeText(EdicionLugarActivity.this, "Permisos insuficiones por las reglas", Toast.LENGTH_SHORT).show();
+                            } else {
+                                finish();
+                            }
+                        }
+                    });
 //                SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //                if (id != -1) {
 //                    SelectorFragment.adaptador.notifyItemChanged((int) id);
 //                } else {
 //                    SelectorFragment.adaptador.notifyDataSetChanged();
 //                }
-
+                } catch (Exception ex) {
+                    Toast.makeText(EdicionLugarActivity.this, "Revise los datos", Toast.LENGTH_SHORT).show();
+                    Log.d("Error Guardando Lugar", ex.getMessage());
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -207,71 +207,36 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             final String _id = SelectorFragment.getAdaptador().getKey((int) id);
             final String usuario = FirebaseAuth.getInstance().getUid();
 
-            if (!pref.usarFirestore()) {
-                MainActivity.valoraciones.leerValoracion(_id, usuario, new ValoracionesFirebase.EscuchadorValoracion() {
+            MainActivity.valoraciones.leerValoracion(_id, usuario, new ValoracionesAsinc.EscuchadorValoracion() {
+                @Override
+                public void onNoExiste() {
+                    this.onRespuesta(0.0);
+                    primeraValoracion(true);
+                }
 
-                    @Override
-                    public void onNoExiste() {
-                        this.onRespuesta(0.0);
-                        primeraValoracion(true);
-                    }
-
-                    @Override
-                    public void onRespuesta(Double valor) {
-                        valoracion.setOnRatingBarChangeListener(null);
-                        valoracion.setRating(valor.floatValue());
-                        valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                            @Override
-                            public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
+                @Override
+                public void onRespuesta(Double valor) {
+                    valoracion.setOnRatingBarChangeListener(null);
+                    valoracion.setRating(valor.floatValue());
+                    valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                        @Override
+                        public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
 //                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
-                                primeraValoracion(false);
-                                MainActivity.valoraciones.guardarValoracionYRecalcular(_id, usuario, valor);
+                            primeraValoracion(false);
+                            MainActivity.valoraciones.guardarValoracionYRecalcular(_id, usuario, valor);
 
-                            }
-                        });
-                    }
+                        }
+                    });
+                }
 
-                    @Override
-                    public void onError(Exception e) {
-                        primeraValoracion(false);
-                        this.onRespuesta(0.0);
-                        valoracion.setEnabled(false);
-                        Toast.makeText(VistaLugarFragment.this.getContext(), "No se puede valorar un lugar que haya creado", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-
-                MainActivity.valoraciones.leerValoracion(_id, usuario, new ValoracionesAsinc.EscuchadorValoracion() {
-                    @Override
-                    public void onNoExiste() {
-                        this.onRespuesta(0.0);
-                        primeraValoracion(true);
-                    }
-
-                    @Override
-                    public void onRespuesta(Double valor) {
-                        valoracion.setOnRatingBarChangeListener(null);
-                        valoracion.setRating(valor.floatValue());
-                        valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                            @Override
-                            public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
-//                                ValoracionesFirestore.guardarValoracion(_id, usuario, (double) valor);
-                                primeraValoracion(false);
-                                MainActivity.valoraciones.guardarValoracionYRecalcular(_id, usuario, valor);
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        primeraValoracion(false);
-                        this.onRespuesta(0.0);
-                        valoracion.setEnabled(false);
-                        Toast.makeText(VistaLugarFragment.this.getContext(), "No se puede valorar un lugar que haya creado", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+                @Override
+                public void onError(Exception e) {
+                    primeraValoracion(false);
+                    this.onRespuesta(0.0);
+                    valoracion.setEnabled(false);
+                    Toast.makeText(VistaLugarFragment.this.getContext(), "No se puede valorar un lugar que haya creado", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
         }
@@ -351,6 +316,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                             // FIREBASE FIRESTORE
                             String _id = SelectorFragment.getAdaptador().getKey((int) id);
                             MainActivity.lugares.borrar(_id);
+
+                            if (Preferencias.getInstance().usarFirestore()) {
+                                Toast.makeText((VistaLugarFragment.this).getActivity(), "Los permisos de configuración no permiten borrar lugares!",Toast.LENGTH_SHORT).show();
+                            }
 //                        SelectorFragment.adaptador.setCursor(
 //                                MainActivity.lugares.extraeCursor());
 //                        SelectorFragment.adaptador.notifyDataSetChanged();

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.mislugares.R;
+import com.example.mislugares.almacenamiento.LugaresAsinc;
 import com.example.mislugares.fragment.UsuarioFragment;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -70,7 +71,22 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
-//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build();;
+
+        if (auth.getCurrentUser() != null)
+            auth.getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    initialize();
+                }
+            });
+        else
+            initialize();
+
+
+    }
+
+    private void initialize() {
+        //        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build();;
 //        FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
 //        FacebookSdk.sdkInitialize(this);
@@ -145,8 +161,6 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
         muestraOcultaAnonima();
         verificaSiUsuarioValidado();
-
-
     }
 
     private void muestraOcultaAnonima() {
@@ -160,14 +174,23 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
     private void verificaSiUsuarioValidado() {
         if (!unificar && FirebaseAuth.getInstance().getCurrentUser() != null) {
-            guardarUsuario(auth.getCurrentUser());
-            Intent i = new Intent(this, MainActivity.class);
-            UsuarioFragment.passwordEmail = contraseña;
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            if (dialogo != null)
-                dialogo.dismiss();
-            startActivity(i);
-            finish();
+            guardarUsuario(auth.getCurrentUser(), new LugaresAsinc.EscuchadorActualiza() {
+                @Override
+                public void onRespuesta(boolean estado) {
+                    if (estado) {
+                        Intent i = new Intent(CustomLoginActivity.this, MainActivity.class);
+                        UsuarioFragment.passwordEmail = contraseña;
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        if (dialogo != null)
+                            dialogo.dismiss();
+                        startActivity(i);
+                        finish();
+                    } else {
+                        mensaje("Error grabando Usuario en BBDD");
+                    }
+                }
+            });
+
         }
     }
 
@@ -341,15 +364,16 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
     }
 
     private void errorLogin() {
-        unificar = false;
+//        unificar = false;
         if (dialogo != null)
             dialogo.dismiss();
-        if (auth.getCurrentUser() != null)
-            AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                }
-            });
+//        if (auth.getCurrentUser() != null)
+//            AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                }
+//            });
+//
     }
 
     @Override
